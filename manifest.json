@@ -1,7 +1,7 @@
 {
-  "name": "BERA — Protocolo ao Vivo",
-  "short_name": "BERA Protocolo",
-  "description": "Protocolo profissional de passagem de som ao vivo — BERA Escola de Áudio Profissional",
+  "name": "BERA Stage",
+  "short_name": "BERA Stage",
+  "description": "Guia completo de evento ao vivo — Antes, Durante e Depois. BERA Escola de Áudio Profissional.",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
@@ -10,12 +10,10 @@
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230b0c0f'/><text y='360' x='256' text-anchor='middle' font-size='280' font-family='monospace' font-weight='700' fill='%23f5a623'>B</text></svg>",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230b0c0f'/><text y='300' x='256' text-anchor='middle' font-size='220' font-family='monospace' font-weight='900' fill='%23f5a623'>B</text><text y='390' x='256' text-anchor='middle' font-size='72' font-family='monospace' font-weight='400' letter-spacing='18' fill='%238a96b0'>STAGE</text></svg>",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     }
-  ],
-  "categories": ["productivity", "utilities"],
-  "screenshots": []
+  ]
 }

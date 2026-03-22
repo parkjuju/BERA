@@ -6,35 +6,32 @@
 <meta name="theme-color" content="#0b0c0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="BERA Protocolo">
-<meta name="description" content="Protocolo profissional de passagem de som ao vivo — BERA Escola de Áudio Profissional">
-<title>BERA — Protocolo ao Vivo</title>
+<meta name="apple-mobile-web-app-title" content="BERA Stage">
+<title>BERA Stage</title>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230b0c0f'/><text y='68' x='50' text-anchor='middle' font-size='42' font-family='monospace' font-weight='700' fill='%23f5a623'>B</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg:      #0b0c0f;
-  --bg1:     #0e1015;
+  --bg1:     #0d0f14;
   --sur:     #111318;
   --card:    #161a22;
-  --card2:   #1c2130;
-  --bdr:     #252b38;
+  --card2:   #1a1f2b;
+  --bdr:     #232937;
   --bdr2:    #2e3850;
   --amber:   #f5a623;
-  --amber2:  #ffcc6b;
-  --amber-d: #7a4e00;
+  --amber2:  #ffc55e;
   --green:   #39e07a;
-  --green-d: #0d4020;
-  --red:     #ff4757;
-  --red-d:   #4a0810;
+  --green-d: #0c3d20;
   --blue:    #3b8bd4;
-  --cyan:    #00d4ff;
+  --blue-lt: #7bbce8;
+  --red:     #ff4757;
   --muted:   #8a96b0;
+  --muted2:  #5a6478;
   --text:    #d8e0f0;
-  --text2:   #a0acc8;
+  --text2:   #9daac4;
   --mono:    'IBM Plex Mono', monospace;
   --sans:    'IBM Plex Sans', sans-serif;
   --disp:    'Bebas Neue', sans-serif;
@@ -44,765 +41,363 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-html, body {
-  height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  font-size: 14px;
-  line-height: 1.5;
-  overflow: hidden;
-}
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; overflow: hidden; }
 
-/* ── LAYOUT ── */
-.app {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-  max-width: 480px;
-  margin: 0 auto;
-}
+/* ── SPLASH ── */
+.splash { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; transition: opacity 0.4s ease; }
+.splash.hide { opacity: 0; pointer-events: none; }
+.splash-logo { font-family: var(--disp); font-size: 64px; letter-spacing: 0.1em; color: var(--amber); line-height: 1; }
+.splash-sub   { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: 0.2em; margin-bottom: 40px; }
+.splash-track { width: 100px; height: 1px; background: var(--bdr2); }
+.splash-fill  { height: 1px; background: var(--amber); animation: load 1.2s ease forwards; }
+@keyframes load { from { width:0 } to { width:100% } }
+
+/* ── APP SHELL ── */
+.app { display: flex; flex-direction: column; height: 100dvh; max-width: 480px; margin: 0 auto; }
 
 /* ── HEADER ── */
 header {
   background: var(--bg1);
   border-bottom: 1px solid var(--bdr);
-  padding: calc(var(--safe-top) + 12px) 16px 0;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 10;
+  padding: calc(var(--safe-top) + 14px) 16px 0;
+  flex-shrink: 0; z-index: 10;
 }
 
-.header-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
+.hd-row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 
-.brand {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
+.brand { display: flex; align-items: baseline; gap: 8px; }
+.brand-name { font-family: var(--disp); font-size: 28px; letter-spacing: 0.06em; color: var(--amber); line-height: 1; }
+.brand-stage { font-family: var(--disp); font-size: 28px; letter-spacing: 0.06em; color: var(--muted2); line-height: 1; }
 
-.brand-name {
-  font-family: var(--disp);
-  font-size: 26px;
-  letter-spacing: 0.06em;
-  color: var(--amber);
-  line-height: 1;
-}
+.hd-right { display: flex; align-items: center; gap: 8px; }
 
-.brand-sub {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-}
-
-.header-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-}
-
-.progress-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-}
-
-.progress-count {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
+.global-pct {
+  font-family: var(--mono); font-size: 13px; font-weight: 600;
   color: var(--amber);
 }
 
-/* Global progress bar */
-.global-progress {
-  height: 2px;
-  background: var(--bdr);
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 0;
-}
-
-.global-progress-fill {
-  height: 100%;
-  background: var(--amber);
-  transition: width 0.4s ease;
-}
-
-/* Phase tabs */
-.phase-tabs {
-  display: flex;
-  gap: 2px;
-  padding: 8px 0 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.phase-tabs::-webkit-scrollbar { display: none; }
-
-.phase-tab {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 6px 12px 8px;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-  position: relative;
-}
-
-.phase-tab.done .tab-num { color: var(--green); }
-.phase-tab.done .tab-label { color: var(--green); opacity: 0.7; }
-.phase-tab.done { border-bottom-color: var(--green-d); }
-
-.phase-tab.active .tab-num { color: var(--amber); }
-.phase-tab.active .tab-label { color: var(--amber); }
-.phase-tab.active { border-bottom-color: var(--amber); }
-
-.tab-num {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-}
-
-.tab-label {
-  font-size: 10px;
-  color: var(--muted);
-  white-space: nowrap;
-  letter-spacing: 0.01em;
-}
-
-/* ── MAIN CONTENT ── */
-main {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  scroll-behavior: smooth;
-}
-
-/* ── PHASE SECTION ── */
-.phase-header {
-  padding: 20px 16px 12px;
-  border-bottom: 1px solid var(--bdr);
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.phase-info { flex: 1; }
-
-.phase-num-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  margin-bottom: 4px;
-}
-
-.phase-title {
-  font-family: var(--disp);
-  font-size: 22px;
-  letter-spacing: 0.04em;
-  color: var(--text);
-  line-height: 1.1;
-  margin-bottom: 4px;
-}
-
-.phase-module {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--amber);
-  letter-spacing: 0.06em;
-}
-
-/* Timer */
-.phase-timer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.timer-display {
-  font-family: var(--mono);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--amber);
-  letter-spacing: 0.04em;
-  min-width: 64px;
-  text-align: center;
-}
-
-.timer-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-}
-
-.timer-btn {
-  background: none;
-  border: 1px solid var(--bdr2);
-  border-radius: 4px;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 10px;
-  padding: 3px 8px;
-  cursor: pointer;
+.btn-icon {
+  width: 34px; height: 34px; border-radius: 6px;
+  border: 1px solid var(--bdr2); background: transparent;
+  color: var(--muted); font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
   transition: all 0.15s;
 }
+.btn-icon:active { border-color: var(--amber); color: var(--amber); }
+.btn-icon.danger:active { border-color: var(--red); color: var(--red); }
 
-.timer-btn:hover, .timer-btn:active { border-color: var(--amber); color: var(--amber); }
-.timer-btn.running { border-color: var(--red); color: var(--red); }
+/* Event meta bar */
+.event-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 0 10px; overflow-x: auto; scrollbar-width: none;
+}
+.event-bar::-webkit-scrollbar { display: none; }
 
-/* Phase progress mini */
-.phase-progress-bar {
-  height: 3px;
-  background: var(--bdr);
-  margin: 0 16px 0;
+.ev-field { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.ev-label { font-family: var(--mono); font-size: 9px; color: var(--muted2); letter-spacing: 0.06em; }
+.ev-input {
+  background: transparent; border: none; outline: none;
+  font-family: var(--mono); font-size: 11px; color: var(--text);
+  border-bottom: 1px solid var(--bdr2); padding: 1px 4px;
+}
+.ev-input::placeholder { color: var(--muted2); }
+.ev-input:focus { border-bottom-color: var(--amber); }
+.ev-input.wide { width: 120px; }
+.ev-input.med  { width: 90px; }
+.ev-input.sm   { width: 70px; }
+.ev-input[type="date"] { width: 120px; color-scheme: dark; }
+
+/* Phase tabs */
+.phase-tabs { display: flex; border-top: 1px solid var(--bdr); }
+
+.phase-tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 3px; padding: 8px 4px;
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all 0.2s;
 }
 
-.phase-progress-fill {
-  height: 100%;
-  background: var(--amber);
-  transition: width 0.4s ease;
+.pt-indicator {
+  width: 28px; height: 3px; border-radius: 99px;
+  background: var(--bdr2); transition: background 0.2s;
+  position: relative; overflow: hidden;
 }
+.pt-fill { height: 100%; border-radius: 99px; width: 0%; transition: width 0.4s ease; }
 
-/* ── STEPS ── */
-.steps-list {
-  padding: 8px 0 80px;
+.pt-label { font-family: var(--mono); font-size: 10px; color: var(--muted2); letter-spacing: 0.06em; transition: color 0.2s; }
+.pt-count { font-family: var(--mono); font-size: 9px; color: var(--muted2); }
+
+.phase-tab[data-phase="antes"].active   { border-bottom-color: var(--amber); }
+.phase-tab[data-phase="durante"].active { border-bottom-color: var(--blue-lt); }
+.phase-tab[data-phase="depois"].active  { border-bottom-color: var(--green); }
+
+.phase-tab[data-phase="antes"].active   .pt-label { color: var(--amber); }
+.phase-tab[data-phase="durante"].active .pt-label { color: var(--blue-lt); }
+.phase-tab[data-phase="depois"].active  .pt-label { color: var(--green); }
+
+.phase-tab[data-phase="antes"].active   .pt-count { color: var(--amber); }
+.phase-tab[data-phase="durante"].active .pt-count { color: var(--blue-lt); }
+.phase-tab[data-phase="depois"].active  .pt-count { color: var(--green); }
+
+.pt-fill.antes   { background: var(--amber); }
+.pt-fill.durante { background: var(--blue-lt); }
+.pt-fill.depois  { background: var(--green); }
+
+/* ── MAIN ── */
+main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+
+.phase-view { display: none; }
+.phase-view.show { display: block; }
+
+/* ── CHECKLIST PHASE (Antes / Depois) ── */
+.legend {
+  display: flex; gap: 14px; padding: 9px 16px;
+  background: var(--bg1); border-bottom: 1px solid var(--bdr);
 }
+.lg-item { display: flex; align-items: center; gap: 5px; }
+.lg-dot  { width: 8px; height: 8px; border-radius: 1px; }
+.lg-text { font-family: var(--mono); font-size: 9px; color: var(--muted2); letter-spacing: 0.04em; }
 
-.step-item {
-  border-bottom: 1px solid var(--bdr);
-  transition: background 0.15s;
+.group { border-bottom: 1px solid var(--bdr); }
+
+.group-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; cursor: pointer; background: var(--bg1);
+  user-select: none; transition: background 0.12s;
 }
+.group-header:active { background: var(--sur); }
 
-.step-head {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  cursor: pointer;
-  user-select: none;
+.gh-left { display: flex; align-items: center; gap: 8px; }
+.group-icon { width: 26px; height: 26px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.group-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.group-done  { font-family: var(--mono); font-size: 10px; color: var(--muted2); }
+.group-chev  { color: var(--muted2); font-size: 12px; transition: transform 0.2s; }
+.group.open .group-chev { transform: rotate(180deg); }
+.group-items { display: none; }
+.group.open .group-items { display: block; }
+
+.chk-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 11px 16px; border-top: 1px solid var(--bdr);
   position: relative;
 }
+.chk-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+.chk-item.lv-obrigatorio::before { background: var(--red); }
+.chk-item.lv-recomendado::before { background: var(--amber); }
+.chk-item.lv-bonus::before       { background: var(--green); }
 
+.chk-box {
+  width: 20px; height: 20px; border-radius: 4px;
+  border: 1.5px solid var(--bdr2); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s; margin-top: 1px;
+}
+.chk-item.done .chk-box { border-color: transparent; }
+.chk-item.lv-obrigatorio.done .chk-box { background: var(--red); }
+.chk-item.lv-recomendado.done .chk-box { background: var(--amber); }
+.chk-item.lv-bonus.done       .chk-box { background: var(--green); }
+.chk-item.done .chk-box::after {
+  content: ''; width: 9px; height: 5px;
+  border-left: 2px solid #000; border-bottom: 2px solid #000;
+  transform: rotate(-45deg) translateY(-1px); display: block;
+}
+
+.chk-content { flex: 1; min-width: 0; }
+.chk-top  { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.chk-title { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.35; flex: 1; }
+.chk-item.done .chk-title { color: var(--muted2); text-decoration: line-through; text-decoration-color: var(--bdr2); }
+
+.chk-badge {
+  font-family: var(--mono); font-size: 8px; font-weight: 600;
+  padding: 2px 5px; border-radius: 2px; flex-shrink: 0;
+  letter-spacing: 0.05em; align-self: flex-start; margin-top: 1px;
+}
+.badge-ob { background: rgba(255,71,87,0.12); color: #ff8090; border: 1px solid rgba(255,71,87,0.2); }
+.badge-re { background: rgba(245,166,35,0.1);  color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
+.badge-bo { background: rgba(57,224,122,0.08); color: #7de8a8; border: 1px solid rgba(57,224,122,0.18); }
+
+.chk-mod  { font-family: var(--mono); font-size: 9px; color: var(--muted2); margin-top: 3px; }
+.chk-note { font-size: 11px; color: var(--text2); line-height: 1.5; margin-top: 4px; }
+.chk-warn {
+  font-size: 10px; color: #ff8090;
+  background: rgba(255,71,87,0.07);
+  border-radius: 3px; padding: 3px 7px;
+  margin-top: 5px; line-height: 1.5;
+}
+
+/* ── DURANTE PHASE (Protocol steps) ── */
+.proto-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--bdr);
+  background: var(--bg1);
+  position: sticky; top: 0; z-index: 5;
+}
+
+.proto-info { flex: 1; }
+.proto-phase-lbl { font-family: var(--mono); font-size: 10px; color: var(--muted2); letter-spacing: 0.1em; margin-bottom: 3px; }
+.proto-phase-title { font-family: var(--disp); font-size: 22px; letter-spacing: 0.04em; color: var(--text); line-height: 1.1; }
+.proto-phase-mod  { font-family: var(--mono); font-size: 10px; color: var(--blue-lt); margin-top: 2px; }
+
+.timer-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
+.timer-val  { font-family: var(--mono); font-size: 22px; font-weight: 600; color: var(--blue-lt); min-width: 64px; text-align: center; }
+.timer-lbl  { font-family: var(--mono); font-size: 9px; color: var(--muted2); letter-spacing: 0.08em; }
+.timer-btn  {
+  background: transparent; border: 1px solid var(--bdr2); border-radius: 4px;
+  color: var(--muted); font-family: var(--mono); font-size: 10px;
+  padding: 3px 8px; cursor: pointer; transition: all 0.15s;
+}
+.timer-btn:active        { border-color: var(--blue-lt); color: var(--blue-lt); }
+.timer-btn.running       { border-color: var(--red); color: var(--red); }
+
+.proto-seg-bar { height: 2px; background: var(--bdr); margin: 0 16px; }
+.proto-seg-fill { height: 100%; background: var(--blue-lt); transition: width 0.35s ease; }
+
+/* Step nav pills */
+.step-nav {
+  display: flex; gap: 4px; padding: 8px 16px;
+  overflow-x: auto; scrollbar-width: none;
+  background: var(--bg1); border-bottom: 1px solid var(--bdr);
+}
+.step-nav::-webkit-scrollbar { display: none; }
+
+.snav-btn {
+  flex-shrink: 0; font-family: var(--mono); font-size: 9px; font-weight: 600;
+  padding: 4px 10px; border-radius: 99px; letter-spacing: 0.05em;
+  border: 1px solid var(--bdr2); background: transparent; color: var(--muted2);
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.snav-btn.active  { background: rgba(123,188,232,0.12); border-color: var(--blue-lt); color: var(--blue-lt); }
+.snav-btn.done-p  { background: rgba(57,224,122,0.08); border-color: rgba(57,224,122,0.3); color: #7de8a8; }
+
+.steps-list { padding-bottom: 100px; }
+
+.step-item { border-bottom: 1px solid var(--bdr); }
+
+.step-head {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 13px 16px; cursor: pointer; user-select: none;
+  transition: background 0.12s;
+}
 .step-head:active { background: rgba(255,255,255,0.02); }
 
-.step-check {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 1.5px solid var(--bdr2);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  margin-top: 1px;
-  cursor: pointer;
+.step-chk {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid var(--bdr2); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s; margin-top: 1px;
+}
+.step-chk.done { background: var(--blue-lt); border-color: var(--blue-lt); }
+.step-chk.done::after {
+  content: ''; width: 10px; height: 6px;
+  border-left: 2px solid #000; border-bottom: 2px solid #000;
+  transform: rotate(-45deg) translateY(-1px); display: block;
 }
 
-.step-check.done {
-  background: var(--amber);
-  border-color: var(--amber);
-}
+.step-body { flex: 1; min-width: 0; }
+.step-n     { font-family: var(--mono); font-size: 10px; color: var(--muted2); letter-spacing: 0.06em; margin-bottom: 2px; }
+.step-title { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.35; padding-right: 8px; }
+.step-item.sdone .step-title { color: var(--muted2); text-decoration: line-through; text-decoration-color: var(--bdr2); }
+.step-brief { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
 
-.step-check.done::after {
-  content: '';
-  width: 10px;
-  height: 6px;
-  border-left: 2px solid #000;
-  border-bottom: 2px solid #000;
-  transform: rotate(-45deg) translateY(-1px);
-  display: block;
-}
+.step-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
 
-.step-body-wrap { flex: 1; min-width: 0; }
-
-.step-num {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-  margin-bottom: 2px;
-}
-
-.step-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1.35;
-  padding-right: 8px;
-}
-
-.step-item.done .step-title { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--bdr2); }
-
-.step-brief {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 2px;
-  line-height: 1.4;
-}
-
-.step-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.crit {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 3px;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-}
-
+.crit { font-family: var(--mono); font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.06em; white-space: nowrap; }
 .crit-a { background: rgba(255,71,87,0.15); color: var(--red); border: 1px solid rgba(255,71,87,0.25); }
 .crit-b { background: rgba(245,166,35,0.12); color: var(--amber); border: 1px solid rgba(245,166,35,0.25); }
 .crit-c { background: rgba(57,224,122,0.1); color: var(--green); border: 1px solid rgba(57,224,122,0.2); }
 
-.chevron {
-  color: var(--muted);
-  font-size: 14px;
-  transition: transform 0.2s;
-  margin-top: 2px;
-  line-height: 1;
-}
+.step-chev { color: var(--muted2); font-size: 14px; transition: transform 0.2s; margin-top: 2px; }
+.step-item.open .step-chev { transform: rotate(180deg); }
 
-.step-item.open .chevron { transform: rotate(180deg); }
-
-/* Step detail panel */
-.step-detail {
-  display: none;
-  padding: 0 16px 16px 50px;
-}
-
+.step-detail { display: none; padding: 0 16px 14px 50px; }
 .step-item.open .step-detail { display: block; }
 
-.detail-text {
-  font-size: 13px;
-  color: var(--text2);
-  line-height: 1.7;
-  margin-bottom: 10px;
+.detail-txt { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 10px; }
+.detail-txt strong { color: var(--text); font-weight: 500; }
+.detail-txt em { color: var(--amber2); font-style: normal; font-family: var(--mono); font-size: 12px; }
+
+.d-warn { background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.2); border-radius: 6px; padding: 7px 10px; font-size: 12px; color: #ff8090; line-height: 1.55; margin-bottom: 10px; }
+.d-info { background: rgba(59,139,212,0.1); border: 1px solid rgba(59,139,212,0.2); border-radius: 6px; padding: 7px 10px; font-size: 12px; color: #7ab8f0; line-height: 1.55; margin-bottom: 10px; }
+
+.d-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.d-tag  { font-family: var(--mono); font-size: 10px; padding: 3px 8px; background: var(--card2); border-radius: 3px; color: var(--muted); border: 1px solid var(--bdr); }
+
+/* RF callout */
+.rf-card {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;
+  cursor: pointer; text-decoration: none; transition: background 0.15s;
 }
+.rf-card:active { background: rgba(0,212,255,0.13); }
+.rf-ico { width: 32px; height: 32px; border-radius: 6px; background: var(--bg); border: 1px solid rgba(0,212,255,0.3); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 8px; font-weight: 700; color: #00d4ff; text-align: center; line-height: 1.2; flex-shrink: 0; }
+.rf-lbl { font-family: var(--mono); font-size: 9px; color: rgba(0,212,255,0.7); letter-spacing: 0.08em; margin-bottom: 2px; }
+.rf-ttl { font-size: 13px; font-weight: 500; color: #7ee8ff; margin-bottom: 2px; }
+.rf-dsc { font-size: 11px; color: rgba(0,212,255,0.6); line-height: 1.4; }
+.rf-arr { color: rgba(0,212,255,0.5); font-size: 16px; align-self: center; margin-left: auto; }
 
-.detail-text strong {
-  color: var(--text);
-  font-weight: 500;
-}
-
-.detail-text em {
-  color: var(--amber2);
-  font-style: normal;
-  font-family: var(--mono);
-  font-size: 12px;
-}
-
-.warn-box {
-  background: rgba(255,71,87,0.1);
-  border: 1px solid rgba(255,71,87,0.2);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #ff8090;
-  line-height: 1.55;
-  margin-bottom: 10px;
-}
-
-.warn-box::before {
-  content: '⚠ ';
-  font-size: 11px;
-}
-
-.info-box {
-  background: rgba(59,139,212,0.1);
-  border: 1px solid rgba(59,139,212,0.2);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #7ab8f0;
-  line-height: 1.55;
-  margin-bottom: 10px;
-}
-
-.info-box::before {
-  content: '› ';
-  font-family: var(--mono);
-  font-size: 11px;
-  opacity: 0.7;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-bottom: 10px;
-}
-
-.tag {
-  font-family: var(--mono);
-  font-size: 10px;
-  padding: 3px 8px;
-  background: var(--card2);
-  border-radius: 3px;
-  color: var(--muted);
-  border: 1px solid var(--bdr);
-}
-
-/* RF Tool callout */
-.rf-callout {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  background: rgba(0,212,255,0.07);
-  border: 1px solid rgba(0,212,255,0.2);
-  border-radius: 8px;
-  padding: 10px 12px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 0.15s;
-}
-
-.rf-callout:active { background: rgba(0,212,255,0.12); }
-
-.rf-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  background: #0b0c0f;
-  border: 1px solid rgba(0,212,255,0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-family: var(--mono);
-  font-size: 8px;
-  font-weight: 700;
-  color: #00d4ff;
-  letter-spacing: 0.05em;
-  line-height: 1.2;
-  text-align: center;
-}
-
-.rf-content { flex: 1; }
-
-.rf-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: rgba(0,212,255,0.7);
-  letter-spacing: 0.08em;
-  margin-bottom: 2px;
-}
-
-.rf-title {
-  font-size: 13px;
-  font-weight: 500;
-  color: #7ee8ff;
-  margin-bottom: 2px;
-}
-
-.rf-desc {
-  font-size: 11px;
-  color: rgba(0,212,255,0.6);
-  line-height: 1.4;
-}
-
-.rf-arrow {
-  color: rgba(0,212,255,0.5);
-  font-size: 16px;
-  align-self: center;
-}
-
-/* ── BOTTOM BAR ── */
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
+/* Step nav bottom */
+.proto-nav {
+  position: fixed; bottom: 0; left: 50%;
   transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  background: var(--bg1);
-  border-top: 1px solid var(--bdr);
+  width: 100%; max-width: 480px;
+  background: var(--bg1); border-top: 1px solid var(--bdr);
   padding: 10px 16px calc(var(--safe-bot) + 10px);
-  display: flex;
-  gap: 8px;
-  z-index: 20;
+  display: flex; gap: 8px; z-index: 20;
 }
-
-.btn-prev, .btn-next {
-  flex: 1;
-  padding: 12px;
-  border-radius: 6px;
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  border: 1px solid var(--bdr2);
-  cursor: pointer;
-  transition: all 0.15s;
-}
+.proto-nav.hidden { display: none; }
 
 .btn-prev {
-  background: transparent;
-  color: var(--muted);
+  flex: 1; padding: 12px; border-radius: 6px;
+  background: transparent; border: 1px solid var(--bdr2);
+  color: var(--muted); font-family: var(--mono); font-size: 11px;
+  font-weight: 600; letter-spacing: 0.06em; cursor: pointer;
 }
-
-.btn-prev:active { background: var(--sur); }
-
 .btn-next {
-  background: var(--amber);
-  color: #000;
-  border-color: var(--amber);
-  flex: 2;
+  flex: 2; padding: 12px; border-radius: 6px;
+  background: var(--blue); border: none; color: #fff;
+  font-family: var(--mono); font-size: 11px;
+  font-weight: 600; letter-spacing: 0.06em; cursor: pointer;
+  transition: background 0.15s;
 }
+.btn-next:active { background: var(--blue-lt); }
+.btn-next:disabled { background: var(--bdr); color: var(--muted); cursor: default; }
 
-.btn-next:active { background: var(--amber2); }
-.btn-next:disabled { background: var(--bdr); color: var(--muted); border-color: var(--bdr); cursor: default; }
-
-/* ── COMPLETE SCREEN ── */
-.complete-screen {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 40px 24px;
-  text-align: center;
-}
-
+/* ── COMPLETE ── */
+.complete-screen { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; padding: 40px 24px; text-align: center; }
 .complete-screen.show { display: flex; }
+.complete-icon { width: 72px; height: 72px; border-radius: 50%; background: rgba(57,224,122,0.15); border: 2px solid var(--green); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+.complete-icon::after { content: ''; width: 28px; height: 18px; border-left: 3px solid var(--green); border-bottom: 3px solid var(--green); transform: rotate(-45deg) translateY(-3px); display: block; }
+.complete-ttl { font-family: var(--disp); font-size: 36px; letter-spacing: 0.06em; color: var(--green); margin-bottom: 8px; }
+.complete-sub { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 280px; }
 
-.complete-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: rgba(57,224,122,0.15);
-  border: 2px solid var(--green);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24px;
-}
+/* ── MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: flex-end; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal-box { background: var(--card2); border: 1px solid var(--bdr2); border-radius: 14px 14px 0 0; padding: 24px 20px calc(20px + var(--safe-bot)); width: 100%; max-width: 480px; animation: slideUp 0.22s ease; }
+@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-title { font-family: var(--disp); font-size: 22px; letter-spacing: 0.06em; color: var(--text); margin-bottom: 6px; }
+.modal-sub   { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+.modal-btns  { display: flex; flex-direction: column; gap: 8px; }
+.btn-modal-confirm { width: 100%; padding: 14px; background: var(--red); color: #fff; border: none; border-radius: 8px; font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; cursor: pointer; }
+.btn-modal-cancel  { width: 100%; padding: 14px; background: transparent; color: var(--muted); border: 1px solid var(--bdr2); border-radius: 8px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; cursor: pointer; }
 
-.complete-icon::after {
-  content: '';
-  width: 28px;
-  height: 18px;
-  border-left: 3px solid var(--green);
-  border-bottom: 3px solid var(--green);
-  transform: rotate(-45deg) translateY(-3px);
-  display: block;
-}
-
-.complete-title {
-  font-family: var(--disp);
-  font-size: 36px;
-  letter-spacing: 0.06em;
-  color: var(--green);
-  margin-bottom: 8px;
-}
-
-.complete-sub {
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.6;
-  margin-bottom: 32px;
-  max-width: 280px;
-}
-
-.btn-reset {
-  background: transparent;
-  border: 1px solid var(--bdr2);
-  border-radius: 6px;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 12px;
-  padding: 10px 24px;
-  cursor: pointer;
-  letter-spacing: 0.06em;
-  transition: all 0.15s;
-}
-
-.btn-reset:active { border-color: var(--amber); color: var(--amber); }
-
-/* ── INSTALL PROMPT ── */
-.install-banner {
-  display: none;
-  position: fixed;
-  bottom: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 32px);
-  max-width: 448px;
-  background: var(--card2);
-  border: 1px solid var(--bdr2);
-  border-radius: 10px;
-  padding: 12px 14px;
-  z-index: 30;
-  flex-direction: column;
-  gap: 8px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-}
-
+/* ── INSTALL BANNER ── */
+.install-banner { display: none; position: fixed; bottom: calc(var(--safe-bot) + 16px); left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; background: var(--card2); border: 1px solid var(--bdr2); border-radius: 10px; padding: 12px 14px; z-index: 50; flex-direction: column; gap: 8px; }
 .install-banner.show { display: flex; }
+.ib-top { display: flex; align-items: center; gap: 10px; }
+.ib-logo { width: 36px; height: 36px; border-radius: 8px; background: var(--bg); border: 1px solid var(--bdr2); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 8px; font-weight: 700; color: var(--amber); text-align: center; line-height: 1.3; }
+.ib-ttl { font-size: 13px; font-weight: 500; color: var(--text); }
+.ib-sub { font-size: 11px; color: var(--muted); }
+.ib-txt { flex: 1; }
+.ib-btns { display: flex; gap: 8px; }
+.btn-ib-ok  { flex: 1; background: var(--amber); color: #000; border: none; border-radius: 5px; font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 8px; cursor: pointer; }
+.btn-ib-no  { background: transparent; border: 1px solid var(--bdr2); border-radius: 5px; color: var(--muted); font-family: var(--mono); font-size: 11px; padding: 8px 12px; cursor: pointer; }
 
-.install-top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.install-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: #0b0c0f;
-  border: 1px solid var(--bdr2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--amber);
-}
-
-.install-text { flex: 1; }
-.install-title { font-size: 13px; font-weight: 500; color: var(--text); }
-.install-sub { font-size: 11px; color: var(--muted); }
-
-.install-actions { display: flex; gap: 8px; }
-
-.btn-install {
-  flex: 1;
-  background: var(--amber);
-  color: #000;
-  border: none;
-  border-radius: 6px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 8px;
-  cursor: pointer;
-  letter-spacing: 0.05em;
-}
-
-.btn-dismiss {
-  background: transparent;
-  border: 1px solid var(--bdr2);
-  border-radius: 6px;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-/* ── SPLASH ── */
-.splash {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  transition: opacity 0.4s ease;
-}
-
-.splash.hide { opacity: 0; pointer-events: none; }
-
-.splash-logo {
-  font-family: var(--disp);
-  font-size: 56px;
-  letter-spacing: 0.1em;
-  color: var(--amber);
-  margin-bottom: 6px;
-}
-
-.splash-tagline {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 0.14em;
-  margin-bottom: 40px;
-}
-
-.splash-loader {
-  width: 120px;
-  height: 2px;
-  background: var(--bdr);
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.splash-loader-fill {
-  height: 100%;
-  background: var(--amber);
-  border-radius: 99px;
-  animation: load 1.2s ease forwards;
-}
-
-@keyframes load {
-  from { width: 0; }
-  to   { width: 100%; }
-}
-
-/* ── MISC ── */
-.badge-done {
-  font-family: var(--mono);
-  font-size: 10px;
-  padding: 2px 7px;
-  border-radius: 3px;
-  background: rgba(57,224,122,0.1);
-  color: var(--green);
-  border: 1px solid rgba(57,224,122,0.2);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; animation: none !important; }
-}
-
-/* Fade in steps */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.step-item {
-  animation: fadeUp 0.25s ease both;
-}
-
-.step-item:nth-child(1) { animation-delay: 0.03s; }
-.step-item:nth-child(2) { animation-delay: 0.06s; }
-.step-item:nth-child(3) { animation-delay: 0.09s; }
-.step-item:nth-child(4) { animation-delay: 0.12s; }
-.step-item:nth-child(5) { animation-delay: 0.15s; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.group, .step-item { animation: fadeUp 0.2s ease both; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
@@ -810,734 +405,592 @@ main {
 <!-- SPLASH -->
 <div class="splash" id="splash">
   <div class="splash-logo">BERA</div>
-  <div class="splash-tagline">PROTOCOLO AO VIVO</div>
-  <div class="splash-loader"><div class="splash-loader-fill"></div></div>
+  <div class="splash-sub">STAGE</div>
+  <div class="splash-track"><div class="splash-fill"></div></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="resetModal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-title">Novo evento</div>
+    <div class="modal-sub">Todos os itens marcados, timers e dados do evento serão zerados.</div>
+    <div class="modal-btns">
+      <button class="btn-modal-confirm" onclick="executeReset()">ZERAR TUDO</button>
+      <button class="btn-modal-cancel" onclick="closeModal()">Cancelar</button>
+    </div>
+  </div>
 </div>
 
 <!-- INSTALL BANNER -->
 <div class="install-banner" id="installBanner">
-  <div class="install-top">
-    <div class="install-logo">BERA</div>
-    <div class="install-text">
-      <div class="install-title">Instalar na tela inicial</div>
-      <div class="install-sub">Acesso rápido · Funciona offline</div>
+  <div class="ib-top">
+    <div class="ib-logo">BERA<br>STAGE</div>
+    <div class="ib-txt">
+      <div class="ib-ttl">Instalar na tela inicial</div>
+      <div class="ib-sub">Acesso rápido · Funciona offline</div>
     </div>
   </div>
-  <div class="install-actions">
-    <button class="btn-install" id="btnInstall">Instalar agora</button>
-    <button class="btn-dismiss" id="btnDismiss">Agora não</button>
+  <div class="ib-btns">
+    <button class="btn-ib-ok" id="btnInstall">Instalar</button>
+    <button class="btn-ib-no" id="btnDismiss">Agora não</button>
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- APP -->
 <div class="app">
 
-  <!-- HEADER -->
   <header>
-    <div class="header-top">
+    <div class="hd-row1">
       <div class="brand">
         <span class="brand-name">BERA</span>
-        <span class="brand-sub">PROTOCOLO AO VIVO</span>
+        <span class="brand-stage">STAGE</span>
       </div>
-      <div class="header-meta">
-        <span class="progress-label">CONCLUÍDAS</span>
-        <span class="progress-count" id="globalCount">0 / 31</span>
+      <div class="hd-right">
+        <span class="global-pct" id="globalPct">0%</span>
+        <button class="btn-icon danger" onclick="openResetModal()" title="Novo evento">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 7.5a5 5 0 1 0 1-3M2.5 7.5V4.5M2.5 7.5H5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     </div>
-    <div class="global-progress">
-      <div class="global-progress-fill" id="globalBar" style="width:0%"></div>
+
+    <div class="event-bar">
+      <div class="ev-field">
+        <span class="ev-label">EVENTO</span>
+        <input class="ev-input wide" id="evNome" placeholder="Nome do show" maxlength="30" oninput="saveMeta()">
+      </div>
+      <div class="ev-field">
+        <span class="ev-label">DATA</span>
+        <input class="ev-input" id="evData" type="date" oninput="saveMeta()" style="width:118px">
+      </div>
+      <div class="ev-field">
+        <span class="ev-label">VENUE</span>
+        <input class="ev-input med" id="evVenue" placeholder="Local" maxlength="22" oninput="saveMeta()">
+      </div>
+      <div class="ev-field">
+        <span class="ev-label">TÉC.</span>
+        <input class="ev-input sm" id="evTec" placeholder="Nome" maxlength="18" oninput="saveMeta()">
+      </div>
     </div>
-    <div class="phase-tabs" id="phaseTabs"></div>
+
+    <div class="phase-tabs">
+      <button class="phase-tab" data-phase="antes"   onclick="showPhase('antes')">
+        <div class="pt-indicator"><div class="pt-fill antes" id="fillAntes" style="width:0%"></div></div>
+        <span class="pt-label">ANTES</span>
+        <span class="pt-count" id="cntAntes">—</span>
+      </button>
+      <button class="phase-tab" data-phase="durante" onclick="showPhase('durante')">
+        <div class="pt-indicator"><div class="pt-fill durante" id="fillDurante" style="width:0%"></div></div>
+        <span class="pt-label">DURANTE</span>
+        <span class="pt-count" id="cntDurante">—</span>
+      </button>
+      <button class="phase-tab" data-phase="depois"  onclick="showPhase('depois')">
+        <div class="pt-indicator"><div class="pt-fill depois" id="fillDepois" style="width:0%"></div></div>
+        <span class="pt-label">DEPOIS</span>
+        <span class="pt-count" id="cntDepois">—</span>
+      </button>
+    </div>
   </header>
 
-  <!-- CONTENT -->
   <main id="mainContent">
 
-    <!-- PHASE VIEW (shown per phase) -->
-    <div id="phaseView">
-      <div class="phase-header">
-        <div class="phase-info">
-          <div class="phase-num-label" id="phaseNumLabel">FASE 01</div>
-          <div class="phase-title" id="phaseTitle">Pré-chegada</div>
-          <div class="phase-module" id="phaseModule">M01 · M02</div>
+    <!-- ANTES -->
+    <div class="phase-view" id="view-antes">
+      <div class="legend">
+        <div class="lg-item"><div class="lg-dot" style="background:var(--red)"></div><span class="lg-text">OBRIGATÓRIO</span></div>
+        <div class="lg-item"><div class="lg-dot" style="background:var(--amber)"></div><span class="lg-text">RECOMENDADO</span></div>
+        <div class="lg-item"><div class="lg-dot" style="background:var(--green)"></div><span class="lg-text">BÔNUS</span></div>
+      </div>
+      <div id="grupos-antes"></div>
+    </div>
+
+    <!-- DURANTE (protocol) -->
+    <div class="phase-view" id="view-durante">
+      <div class="proto-header" id="protoHeader">
+        <div class="proto-info">
+          <div class="proto-phase-lbl" id="protoPhaseLbl">FASE 01 DE 7</div>
+          <div class="proto-phase-title" id="protoPhaseTitle">Pré-chegada</div>
+          <div class="proto-phase-mod" id="protoPhaseMod">M01 · M02</div>
         </div>
-        <div class="phase-timer">
-          <div class="timer-display" id="timerDisplay">00:00</div>
-          <div class="timer-label">FASE</div>
+        <div class="timer-wrap">
+          <div class="timer-val" id="timerVal">00:00</div>
+          <div class="timer-lbl">FASE</div>
           <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">INICIAR</button>
         </div>
       </div>
-
-      <div class="phase-progress-bar">
-        <div class="phase-progress-fill" id="phaseBar" style="width:0%"></div>
-      </div>
-
+      <div class="proto-seg-bar"><div class="proto-seg-fill" id="protoSegFill" style="width:0%"></div></div>
+      <div class="step-nav" id="stepNav"></div>
       <div class="steps-list" id="stepsList"></div>
+      <div class="complete-screen" id="completeScreen">
+        <div class="complete-icon"></div>
+        <div class="complete-ttl">SHOW PRONTO</div>
+        <div class="complete-sub">Protocolo concluído. Todas as etapas verificadas.</div>
+      </div>
     </div>
 
-    <!-- COMPLETE SCREEN -->
-    <div class="complete-screen" id="completeScreen">
-      <div class="complete-icon"></div>
-      <div class="complete-title">SHOW PRONTO</div>
-      <div class="complete-sub">Protocolo concluído. Todas as 31 etapas verificadas. O sistema está calibrado.</div>
-      <button class="btn-reset" onclick="resetAll()">Novo evento</button>
+    <!-- DEPOIS -->
+    <div class="phase-view" id="view-depois">
+      <div class="legend">
+        <div class="lg-item"><div class="lg-dot" style="background:var(--red)"></div><span class="lg-text">OBRIGATÓRIO</span></div>
+        <div class="lg-item"><div class="lg-dot" style="background:var(--amber)"></div><span class="lg-text">RECOMENDADO</span></div>
+        <div class="lg-item"><div class="lg-dot" style="background:var(--green)"></div><span class="lg-text">BÔNUS</span></div>
+      </div>
+      <div id="grupos-depois"></div>
     </div>
 
   </main>
 
-  <!-- BOTTOM BAR -->
-  <div class="bottom-bar" id="bottomBar">
-    <button class="btn-prev" id="btnPrev" onclick="prevPhase()">← ANTERIOR</button>
-    <button class="btn-next" id="btnNext" onclick="nextPhase()">PRÓXIMA FASE →</button>
+  <!-- PROTOCOL NAV (only visible on durante) -->
+  <div class="proto-nav hidden" id="protoNav">
+    <button class="btn-prev" id="btnPrev" onclick="prevProtoPhase()">← ANTERIOR</button>
+    <button class="btn-next" id="btnNext" onclick="nextProtoPhase()">PRÓXIMA →</button>
   </div>
 
 </div>
 
 <script>
-// ─────────────────────────────────────────────
-//  DATA
-// ─────────────────────────────────────────────
-const PHASES = [
-  {
-    id: 0,
-    num: '01',
-    title: 'Pré-chegada',
-    subtitle: 'Análise e preparação',
-    module: 'M01 · M02',
-    steps: [
-      {
-        id: 's01',
-        n: '01',
-        title: 'Ler o rider técnico completo',
-        brief: 'Antes de tocar em qualquer equipamento',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `O rider é o contrato técnico do show. Leia antes do dia do evento. Verifique: lista de canais, patcheamento, tipo de cada instrumento e microfone solicitado, requisitos de monitor por músico, e sistema de PA exigido. Um rider não lido é a principal fonte de conflito com a produção e com o artista.`,
-        tags: ['Lista de canais', 'Tipo de mic por fonte', 'Mixes de monitor', 'Rider de PA'],
-      },
-      {
-        id: 's02',
-        n: '02',
-        title: 'Levantar o plano de RF do venue',
-        brief: 'Canais de TV digital e frequências ocupadas na cidade',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `TV digital ISDB-T ocupa 6 MHz por canal. Antes de designar frequências para microfones sem fio, identificar os canais ativos na cidade. Use o Coordenador RF do BERA para calcular automaticamente as frequências livres de intermodulação de 3ª ordem (IM3).`,
-        rf: true,
-        tags: ['Scan de TV digital', 'Cálculo de IM3', 'Espaçamento mín: 300 kHz'],
-      },
-      {
-        id: 's03',
-        n: '03',
-        title: 'Preparar show file e snapshots',
-        brief: 'Recall de cena e backup do console',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `Em consoles digitais, preparar o show file com os canais nomeados, gains de referência anteriores e patches configurados. Confirmar sample rate idêntico em todos os dispositivos — <strong>48 kHz é o padrão em PA ao vivo</strong>. Ativar e sincronizar o console de backup.`,
-        info: 'Regra digital: confirmar wordclock master antes de ligar qualquer dispositivo escravo. Diferenças de clock causam cliques e artefatos.',
-        tags: ['Show file preparado', 'Sample rate: 48 kHz', 'Backup sincronizado'],
-      },
-    ]
-  },
-  {
-    id: 1,
-    num: '02',
-    title: 'Infraestrutura',
-    subtitle: 'Cabos, patch e microfones',
-    module: 'M07',
-    steps: [
-      {
-        id: 's04',
-        n: '04',
-        title: 'Verificar cabos e conectores',
-        brief: 'XLR, SpeakON, etherCON — cada um no lugar correto',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `XLR balanceado (3 pinos) para microfones e linhas — CMRR acima de 80 dB rejeita interferência. SpeakON NL4 exclusivamente para potência de alto-falante. Confirmar que cabos Cat5e/6 (Dante, AVB) têm conectores etherCON travados para tour.`,
-        warn: 'Nunca confundir SpeakON com XLR em circuitos de potência. Conexão errada destrói drivers.',
-        tags: ['XLR: microfones/linha', 'SpeakON: só potência', 'etherCON: rede de áudio'],
-      },
-      {
-        id: 's05',
-        n: '05',
-        title: 'Confirmar patch físico canal a canal',
-        brief: 'Cada fonte no canal correto do stagebox',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `Conferir o patch físico contra a lista de canais do rider. Em consoles digitais com Dante ou AES50, o patch virtual deve espelhar o patch físico. Um canal trocado no stagebox gera confusão no console e atrasa o soundcheck inteiro.`,
-        tags: ['Lista de canais em mãos', 'Stagebox canal a canal', 'Patch virtual revisado'],
-      },
-      {
-        id: 's06',
-        n: '06',
-        title: 'Posicionar microfones — padrão polar correto',
-        brief: 'Rejeição a 180° apontada para o monitor mais próximo',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `Microfone cardioide: rejeição máxima a 180° (face traseira). A face traseira deve apontar para o monitor de chão mais próximo — primeira linha de defesa contra feedback. Para supercardióides: o nulo está a ~126°, não 180°.`,
-        warn: 'Nunca aplicar phantom 48V antes de confirmar o tipo de microfone. Microfones de fita (ribbon) passivos são destruídos pelo phantom.',
-        tags: ['Cardioide: rejeição a 180°', 'Supercardioide: nulo a 126°', 'Fita: confirmar phantom off'],
-      },
-      {
-        id: 's07',
-        n: '07',
-        title: 'Fazer scan de RF e atribuir frequências',
-        brief: 'Scan no local definitivo antes de ligar os transmissores',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `Com os receptores posicionados no local definitivo, realizar scan do ambiente RF. Atribuir frequências com espaçamento mínimo de 300–600 kHz. Em shows com mais de 8 canais: usar splitters/combiners de antena com antenas direcionais com linha de visada para o palco.`,
-        rf: true,
-        info: 'Use o Coordenador RF do BERA para calcular todas as frequências livres de IM3 automaticamente — offline, sem custo.',
-        tags: ['Scan no local definitivo', 'Espaçamento ≥ 300 kHz', 'Antenas com LOS para o palco'],
-      },
-    ]
-  },
-  {
-    id: 2,
-    num: '03',
-    title: 'Console',
-    subtitle: 'Configuração e estrutura de ganho',
-    module: 'M07 · M09',
-    steps: [
-      {
-        id: 's08',
-        n: '08',
-        title: 'Todos os faders em zero, todos os canais mutados',
-        brief: 'Estado seguro antes de qualquer sinal',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `Antes de ligar o sistema ou receber qualquer sinal, garantir que todos os faders de canal e master estão em 0 dB (unidade) e todos os canais estão mutados. Isso protege os alto-falantes de transientes e evita que ruído inesperado entre no sistema durante a configuração.`,
-        info: 'O fader em 0 dB é a posição nominal do soundcheck. A mixagem acontece movendo faders, não o ganho do pré-amp.',
-        tags: ['Faders: 0 dB', 'Todos os canais: mute', 'Master: 0 dB'],
-      },
-      {
-        id: 's09',
-        n: '09',
-        title: 'Verificar polaridade de cada canal',
-        brief: 'Fase e anti-fase corretas — cancelamento destrói o mix',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `Polaridade invertida em um microfone próximo a outro cancela frequências em comum. Na bateria com múltiplos microfones: respeitar a <strong>Regra dos 3:1</strong> — a distância entre microfones deve ser 3× a distância de cada microfone ao instrumento. Usar o flip de fase (Ø) nos canais para corrigir inversões.`,
-        tags: ['Checar Ø em cada canal', 'Regra 3:1 na bateria', 'Ouvir cancelamento de fase'],
-      },
-      {
-        id: 's10',
-        n: '10',
-        title: 'Aplicar phantom 48V onde necessário',
-        brief: 'Somente após confirmar o tipo de microfone em cada canal',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `Condensadores requerem phantom 48V. Dinâmicos funcionam sem phantom. Microfones de fita passivos são <strong>destruídos pelo phantom</strong> — verificar sempre. Aplicar phantom com o canal mutado para evitar transiente de ativação no sistema.`,
-        warn: 'Fita passiva + phantom 48V = microfone destruído. Isso não é reversível.',
-        tags: ['Condensador: phantom on', 'Dinâmico: sem phantom', 'Fita passiva: NUNCA phantom'],
-      },
-      {
-        id: 's11',
-        n: '11',
-        title: 'Filtro HP em todos os canais de microfone',
-        brief: 'Roll-off abaixo de 80–120 Hz elimina bumps de palco',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `Ativar o filtro high-pass (HP) em cada canal de microfone: <em>80 Hz</em> para vocais e instrumentos de corpo inteiro, <em>100–120 Hz</em> para fontes sem sub-bass. Inclinação recomendada de 12 dB/oitava. Elimina vibração mecânica do palco, respiro e ruído DC.`,
-        tags: ['Vocal: HP a 80 Hz', 'Instrumento sem sub: 100–120 Hz', 'Bumbo: HP a 30–40 Hz'],
-      },
-      {
-        id: 's12',
-        n: '12',
-        title: 'Estrutura de ganho — ajustar pré-amp canal a canal',
-        brief: 'Peaks entre −18 dBu e −6 dBu no VU meter',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `A habilidade mais importante do técnico de PA. Objetivo: maximizar SNR sem atingir o ponto de clip em nenhum estágio. Pedir a cada músico para tocar em <strong>dinâmica de show</strong>. Ajustar o gain do pré-amp para que os picos do sinal fiquem entre <em>−18 dBu e −6 dBu</em> no VU meter. O fader permanece em 0 dB durante o soundcheck.`,
-        info: 'Cadeia de referência: Mic (−50 dBu) → Pré-amp (+4 dBu) → Conversor A/D (−18 a −12 dBFS). Cada estágio com headroom suficiente.',
-        tags: ['Peaks: −18 a −6 dBu', 'Fader: 0 dB', 'Dinâmica de show, não warm-up'],
-      },
-      {
-        id: 's13',
-        n: '13',
-        title: 'Sends de aux para monitores — confirmar pré-fader',
-        brief: 'Mix independente por artista, pré-fader obrigatório',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `Os sends para monitores de palco devem ser configurados em modo <strong>pré-fader</strong>: o nível no monitor do artista é independente da mixagem do PA. Verificar que nenhum aux de monitor está configurado em pós-fader por engano.`,
-        warn: 'Aux de monitor em pós-fader: cada ajuste no FOH afeta o retorno do artista — erro grave que prejudica a performance.',
-        tags: ['Monitor: aux pré-fader', 'PA: aux pós-fader', 'Verificar cada aux individualmente'],
-      },
-    ]
-  },
-  {
-    id: 3,
-    num: '04',
-    title: 'Sistema PA',
-    subtitle: 'Amplificadores e DSP',
-    module: 'M07 · M09',
-    steps: [
-      {
-        id: 's14',
-        n: '14',
-        title: 'Ligar sistema na ordem correta',
-        brief: 'Source → console → DSP → amplificadores',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `Ordem de ligação: fontes de sinal → console → processadores de sistema (DSP, crossover) → amplificadores → alto-falantes. Nunca ligar os amplificadores antes do console estar estabilizado. O transiente de inicialização pode danificar drivers. Ordem de desligamento: inversa.`,
-        tags: ['1. Fontes', '2. Console', '3. DSP/Crossover', '4. Amplificadores'],
-      },
-      {
-        id: 's15',
-        n: '15',
-        title: 'Alinhamento temporal entre caixas (delay)',
-        brief: '1 ms por 34,3 cm de distância entre as caixas',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `Sistemas com múltiplas caixas em posições físicas diferentes precisam de alinhamento temporal preciso. Referência: <em>1 ms por 34,3 cm de distância</em>. Caixas de delay (torres de atraso) ou sistemas distribuídos requerem delay calculado em relação ao PA principal para evitar comb filtering na área de transição.`,
-        tags: ['Fórmula: distância (cm) ÷ 34,3 = delay (ms)', 'Verificar com RTA e medição'],
-      },
-      {
-        id: 's16',
-        n: '16',
-        title: 'EQ de sala e limitação de proteção',
-        brief: 'House EQ remove problemas — não adiciona loudness',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `A equalização de sala corrige resposta medida in situ com RTA. Princípio do BERA: <strong>EQ de sala apenas remove problemas</strong> — cortes em frequências problemáticas, nunca boost para compensar deficiência do sistema. Confirmar que o limitador de proteção está ativo e calibrado.`,
-        tags: ['RTA com mic calibrado', 'Cortes narrow, não boosts', 'Limiter ativo e calibrado'],
-      },
-    ]
-  },
-  {
-    id: 4,
-    num: '05',
-    title: 'Ring Out',
-    subtitle: 'Calibração do sistema de monitor',
-    module: 'M07 · M09',
-    steps: [
-      {
-        id: 's17',
-        n: '17',
-        title: 'Ring out em cada mix de monitor individualmente',
-        brief: 'Encontrar e remover frequências de feedback antes do artista',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `Com o palco vazio, subir o ganho de cada mix de monitor até o sistema começar a realimentar. Identificar a frequência com RTA de alta resolução. Cortar <em>3–6 dB</em> com Q estreito (Q = 8–15). Repetir até ter <strong>6–10 dB de headroom</strong> antes do ponto de feedback. Usar o mínimo de cortes possível.`,
-        info: 'Protocolo: suba o ganho → identifique a frequência → corte narrow −3 a −6 dB → repita. Pare quando tiver 6–10 dB de headroom.',
-        tags: ['Um mix por vez', 'RTA de alta resolução', 'Q estreito: 8–15', 'Headroom: 6–10 dB'],
-      },
-      {
-        id: 's18',
-        n: '18',
-        title: 'Posicionamento das caixas de monitor × microfones',
-        brief: 'Nulo de rejeição do microfone apontado para o driver',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `O posicionamento físico do monitor em relação ao microfone é a primeira linha de defesa contra feedback — mais eficaz que qualquer equalização. Para cardioides: face traseira (180°) para o driver. Para supercardióides: o nulo está a ~126° — calcular o ângulo correto.`,
-        tags: ['Cardioide: traseira → driver', 'Supercardioide: 126° → driver'],
-      },
-      {
-        id: 's19',
-        n: '19',
-        title: 'Verificar sistema IEM individualmente',
-        brief: 'Transmissor, receptor e fone conferidos antes do artista',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `Verificar que cada receptor está na frequência correta e sem interferência. O mix do IEM chega via sends pré-fader do FOH. Verificar nível de saída do transmissor: SPL muito alto por longos períodos causa dano auditivo. Moldes personalizados: atenuação passiva de 25–37 dB.`,
-        tags: ['Frequência RF sem interferência', 'Send pré-fader confirmado', 'Nível: proteger audição do artista'],
-      },
-    ]
-  },
-  {
-    id: 5,
-    num: '06',
-    title: 'Soundcheck',
-    subtitle: 'Cada instrumento e equilíbrio da banda',
-    module: 'M05 · M07 · M09',
-    steps: [
-      {
-        id: 's20',
-        n: '20',
-        title: 'Bateria — base rítmica e espectral',
-        brief: 'Bumbo, caixa, chimbal, toms, overheads — nessa ordem',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `A bateria define a fundação rítmica e ocupa a maior parte do espectro. Começar pelo bumbo (âncora do sub-bass), depois caixa (fundamental em 200 Hz–5 kHz), chimbal (ar 8–16 kHz), toms e overheads. Respeitar a <strong>Regra dos 3:1</strong> entre microfones.`,
-        tags: ['Sub-bass: bumbo + baixo apenas', 'Regra 3:1 entre mics', 'Polaridade verificada'],
-      },
-      {
-        id: 's21',
-        n: '21',
-        title: 'Baixo elétrico — ajustar relação com bumdo',
-        brief: 'Bumbo e baixo na mesma região: separar para evitar acúmulo',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `Bumbo e baixo elétrico competem em 60–200 Hz. Usar EQ para dar endereços espectrais distintos: bumbo com mais sub (<em>40–80 Hz</em>) e ataque (<em>3–5 kHz</em> para o beater); baixo com corpo no médio-grave (<em>80–200 Hz</em>) e definição em <em>700 Hz–1 kHz</em>.`,
-        tags: ['Bumbo: sub 40–80 Hz + ataque 3–5 kHz', 'Baixo: corpo 80–200 Hz + definição 700 Hz–1 kHz'],
-      },
-      {
-        id: 's22',
-        n: '22',
-        title: 'Guitarras e teclado — controlar low-mid',
-        brief: 'Cuidado com "boxiness" em 200–500 Hz',
-        crit: 'c',
-        critLabel: 'TÉCNICO',
-        detail: `Guitarras e teclados vivem em 200 Hz–2 kHz. O BERA alerta para o fenômeno de "boxiness" em 200–500 Hz — acúmulo que fecha o som e reduz inteligibilidade. EQ cirúrgico nos pontos de acúmulo. Panoramização: guitarra rítmica em posições intermediárias (20–40% L/R), não no centro.`,
-        tags: ['Cortes em 200–400 Hz se "abafado"', 'Pan: não tudo no centro', 'HP ativo nos instrumentos sem sub'],
-      },
-      {
-        id: 's23',
-        n: '23',
-        title: 'Vocais — foco em inteligibilidade',
-        brief: 'Região 1 kHz é a presença vocal — não suprimir',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `O vocal principal é sempre no centro e é o elemento de maior prioridade na inteligibilidade. A região de <em>1 kHz</em> é a presença — onde a voz "corta" o mix. Não suprimir essa faixa. Cuidado com sibilância em 5–8 kHz. Compressão vocal: ratio <em>3:1–4:1</em>, attack moderado para preservar transiente de consoantes.`,
-        tags: ['1 kHz: presença — não cortar', 'Compressão: 3:1–4:1', 'Sibilância: 5–8 kHz', 'Vocal: centro no campo estéreo'],
-      },
-      {
-        id: 's24',
-        n: '24',
-        title: 'Mix de monitor por artista',
-        brief: 'Cada músico ouve o que precisa — não o que o técnico acha',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `O mix de monitor é pessoal e funcional — cada artista precisa ouvir o que o ajuda a performar. Perguntar diretamente o que cada músico quer ouvir mais ou menos. Volume de retorno: não mais alto do que o necessário — evita feedback e protege a audição do artista.`,
-        tags: ['Perguntar ao artista', 'Mix: funcional, não estético', 'Volume: mínimo necessário'],
-      },
-      {
-        id: 's25',
-        n: '25',
-        title: 'Banda completa — equilíbrio e panoramização final',
-        brief: 'O mix individual não é o mix da banda — ajustar relações',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `Com todos os instrumentos juntos, o mix muda completamente. Ajustar relações: bateria → baixo → harmônicos (guitarra, teclado) → vocal. Panoramização: sub-bass e vocais no centro, instrumentos harmônicos em posições intermediárias, ambientes e overheads em posições amplas (60–100% L/R).`,
-        tags: ['Sub-bass: sempre no centro', 'Vocais: centro', 'Harmônicos: 20–40% L/R', 'Ambientes: 60–100% L/R'],
-      },
-    ]
-  },
-  {
-    id: 6,
-    num: '07',
-    title: 'Pré-abertura',
-    subtitle: 'Verificação final e posicionamento',
-    module: 'M01 · M09',
-    steps: [
-      {
-        id: 's26',
-        n: '26',
-        title: 'Caminhar pelo venue — ouvir em 3 posições mínimas',
-        brief: 'O técnico não ouve o que a plateia ouve',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `Caminhar pelo venue em pelo menos 3 posições: frente ao palco (perto), meio do espaço, e fundo. Verificar cobertura uniforme, pontos de cancelamento por reflexões, e inteligibilidade vocal em todo o espaço. Fazer ajustes de EQ de sala a partir dessas observações.`,
-        tags: ['Frente ao palco', 'Meio do venue', 'Fundo do venue'],
-      },
-      {
-        id: 's27',
-        n: '27',
-        title: 'Salvar cena do console (snapshot)',
-        brief: 'Estado do soundcheck gravado antes da abertura',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `Em consoles digitais, salvar o snapshot completo após o soundcheck. Isso permite recall imediato se um músico alterar configurações durante a abertura do venue, ou se houver uma falha que obrigue reinicialização. Verificar que o console de backup também tem a cena sincronizada.`,
-        tags: ['Snapshot salvo', 'Nome claro (data + artista)', 'Backup sincronizado'],
-      },
-      {
-        id: 's28',
-        n: '28',
-        title: 'Verificar SPL máximo permitido pelo venue',
-        brief: 'Respeitar limites contratuais e de segurança pública',
-        crit: 'a',
-        critLabel: 'CRÍTICO',
-        detail: `O BERA é explícito: o técnico não deve operar sistemas que apresentem risco à saúde auditiva do público. Respeitar os limites de SPL contratualmente acordados com o venue. Se o artista pedir acima do limite, explicar e documentar por escrito.`,
-        warn: 'SPL acima do limite contratual: presença técnica no evento pode gerar co-responsabilidade legal por danos à audição do público.',
-        tags: ['Limite SPL: verificado', 'Documentar pedidos fora do limite', 'Medidor SPL ativo'],
-      },
-      {
-        id: 's29',
-        n: '29',
-        title: 'Checagem final dos transmissores sem fio',
-        brief: 'Bateria nova, frequência confirmada, antenas posicionadas',
-        crit: 'b',
-        critLabel: 'IMPORTANTE',
-        detail: `Antes da abertura dos portões: substituir baterias de todos os transmissores por baterias novas, independente do nível atual. Confirmar indicador de RF em cada receptor sem interferência. Verificar que as antenas direcionais estão com linha de visada para o palco.`,
-        tags: ['Bateria nova em todos', 'RF: sem interferência', 'Antenas: LOS confirmada'],
-      },
-      {
-        id: 's30',
-        n: '30',
-        title: 'Protocolo de comunicação com a equipe',
-        brief: 'Rádio, intercom — acordar sinais antes do show',
-        crit: 'c',
-        critLabel: 'TÉCNICO',
-        detail: `O BERA enfatiza comunicação clara e objetiva sob pressão. Acordar com a equipe de palco, iluminação e produção os canais de rádio, sinais para início de show, e procedimento para emergências técnicas. Definir quem tem autoridade para pedir pausa em caso de problema crítico.`,
-        tags: ['Canal de rádio: definido', 'Sinal de início: acordado', 'Protocolo de emergência: claro'],
-      },
-      {
-        id: 's31',
-        n: '31',
-        title: 'Posicionamento no FOH — show ao vivo',
-        brief: 'Visão do palco e da plateia — proatividade',
-        crit: 'c',
-        critLabel: 'TÉCNICO',
-        detail: `Durante o show, o BERA orienta proatividade e antecipação de problemas. Manter atenção dividida entre o console, o palco (posição dos músicos e microfones) e a plateia (reação). Um vocalista que se afasta do microfone pede ajuste imediato de fader — não espera o problema virar perda de presença.`,
-        tags: ['Visão: palco + plateia', 'Proativo: antecipa problemas', 'Atenção: músicos e mix'],
-      },
-    ]
-  },
+// ═══════════════════════════════════════════
+//  CHECKLIST DATA — ANTES
+// ═══════════════════════════════════════════
+const ANTES = [
+  { id:'ga1', icon:'📋', title:'Rider e documentação', color:'rgba(245,166,35,.1)', items:[
+    { id:'a1', title:'Ler o rider técnico completo', lv:'ob', mod:'M01', note:'Lista de canais, mixes de monitor, PA exigido e qualquer requisito especial do artista.' },
+    { id:'a2', title:'Confirmar lista de canais e patches', lv:'ob', mod:'M07', note:'Cada canal nomeado, tipo de fonte, microfone solicitado e posição no stagebox.' },
+    { id:'a3', title:'Confirmar quantidade e tipo de mixes de monitor', lv:'ob', mod:'M09', note:'Número de mixes, wedges ou IEM, preferência de cada artista.' },
+    { id:'a4', title:'Verificar SPL máximo permitido pelo venue', lv:'ob', mod:'M01', warn:'Presença técnica no evento pode gerar co-responsabilidade legal por danos à audição do público acima do limite.' },
+    { id:'a5', title:'Confirmar horários: entrada, passagem, abertura, show', lv:'ob', mod:'M01', note:'Mapear o tempo disponível para cada fase do trabalho.' },
+  ]},
+  { id:'ga2', icon:'📡', title:'RF e sistemas wireless', color:'rgba(0,212,255,.07)', items:[
+    { id:'a6', title:'Levantar canais de TV digital ativos na cidade', lv:'ob', mod:'M07', note:'ISDB-T ocupa 6 MHz por canal. Fundamental antes de atribuir frequências.' },
+    { id:'a7', title:'Calcular plano de frequências com Coordenador RF', lv:'ob', mod:'M07', rf:true, note:'Frequências livres de IM3, espaçamento mínimo 300–600 kHz entre canais.' },
+    { id:'a8', title:'Verificar total de canais wireless simultâneos', lv:'re', mod:'M07', note:'Mais de 8 canais: planejar splitters de antena e antenas direcionais.' },
+    { id:'a9', title:'Confirmar baterias e spare transmissores', lv:'re', mod:'M07', note:'Baterias novas para cada transmissor + ao menos 1 transmissor sobressalente.' },
+  ]},
+  { id:'ga3', icon:'🎛', title:'Show file e console', color:'rgba(59,139,212,.07)', items:[
+    { id:'a10', title:'Preparar show file com canais nomeados', lv:'ob', mod:'M07', note:'Patches configurados, gains de referência do show anterior se disponível.' },
+    { id:'a11', title:'Confirmar sample rate: 48 kHz em todos os dispositivos', lv:'ob', mod:'M07', note:'Diferenças de clock causam cliques, pops e artefatos digitais.' },
+    { id:'a12', title:'Ativar e sincronizar console de backup', lv:'re', mod:'M07', note:'Show file idêntico no backup. Teste de failover antes do evento.' },
+    { id:'a13', title:'Preparar snapshots por set/artista', lv:'bo', mod:'M07', note:'Cada artista com sua cena de recall instantâneo.' },
+  ]},
+  { id:'ga4', icon:'🔧', title:'Equipamento e cabos', color:'rgba(57,224,122,.06)', items:[
+    { id:'a14', title:'Conferir todos os cabos XLR e SpeakON', lv:'ob', mod:'M07', warn:'Nunca confundir SpeakON com XLR em circuitos de potência — destrói drivers.' },
+    { id:'a15', title:'Confirmar cabos de rede com etherCON (Dante/AVB)', lv:'re', mod:'M07', note:'Cat5e/6 com conectores travados para tour. Switch gerenciado com QoS.' },
+    { id:'a16', title:'Checar spare parts: fuses, cabos, conectores, DI', lv:'re', mod:'M01', note:'Um cabo ruim durante o show custa mais do que todos os sobressalentes.' },
+    { id:'a17', title:'Verificar laudo elétrico dos equipamentos principais', lv:'bo', mod:'M01', note:'Recuse operar equipamentos sem laudo de segurança elétrica.' },
+  ]},
 ];
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════
+//  PROTOCOL DATA — DURANTE
+// ═══════════════════════════════════════════
+const PROTO_PHASES = [
+  { id:0, num:'01', title:'Montagem e patch', mod:'M07', steps:[
+    { id:'d1', n:'01', title:'Chegar com antecedência suficiente', brief:'Sua pontualidade afeta um ecossistema inteiro', crit:'b', critLabel:'IMPORTANTE', detail:'Atraso no setup compromete o soundcheck, a abertura e a experiência do público. O BERA é direto: pontualidade não é cortesia, é responsabilidade profissional.' },
+    { id:'d2', n:'02', title:'Montar stagebox e confirmar patch canal a canal', brief:'Cada fonte no canal correto', crit:'a', critLabel:'CRÍTICO', detail:'Conferir o patch físico contra a lista de canais do rider. Em consoles digitais com Dante ou AES50, o patch virtual deve espelhar o patch físico. Um canal trocado atrasa todo o soundcheck.', tags:['Lista de canais em mãos','Stagebox canal a canal','Patch virtual revisado'] },
+    { id:'d3', n:'03', title:'Posicionar microfones — padrão polar correto', brief:'Rejeição a 180° apontada para o monitor mais próximo', crit:'a', critLabel:'CRÍTICO', detail:'Microfone cardioide: rejeição máxima a 180° (face traseira). A face traseira deve apontar para o monitor de chão mais próximo. Para supercardióides: o nulo está a ~126°, não 180°.', warn:'Nunca aplicar phantom 48V antes de confirmar o tipo de microfone. Microfones de fita passivos são destruídos pelo phantom.' },
+    { id:'d4', n:'04', title:'Fazer scan de RF e atribuir frequências', brief:'No local definitivo, antes de ligar transmissores', crit:'a', critLabel:'CRÍTICO', detail:'Com os receptores posicionados no local definitivo, realizar scan do ambiente RF. Atribuir frequências com espaçamento mínimo de 300–600 kHz.', rf:true, info:'Use o Coordenador RF do BERA para calcular frequências livres de IM3 automaticamente — offline, sem custo.' },
+    { id:'d5', n:'05', title:'Posicionar antenas com linha de visada para o palco', brief:'Em shows com mais de 8 canais: splitters e paddle antennas', crit:'b', critLabel:'IMPORTANTE', detail:'Antenas direcionais (paddle) com linha de visada direta para os transmissores no palco. Antenas ativas com ganho de 6–9 dBi aumentam o alcance e a imunidade a interferência.', tags:['LOS: palco → antenas','Splitters para >8 canais','Antenas ativas: 6–9 dBi'] },
+  ]},
+  { id:1, num:'02', title:'Console — configuração inicial', mod:'M07 · M09', steps:[
+    { id:'d6', n:'06', title:'Todos os faders em zero, todos os canais mutados', brief:'Estado seguro antes de qualquer sinal', crit:'a', critLabel:'CRÍTICO', detail:'Antes de ligar o sistema ou receber qualquer sinal. Faders de canal e master em 0 dB, todos os canais mutados. Protege os alto-falantes de transientes.', info:'O fader em 0 dB é a posição nominal do soundcheck. A mixagem acontece movendo faders, não o ganho do pré-amp.' },
+    { id:'d7', n:'07', title:'Ligar sistema na ordem correta', brief:'Fontes → Console → DSP → Amplificadores', crit:'a', critLabel:'CRÍTICO', detail:'Ordem de ligação: fontes de sinal → console → processadores (DSP, crossover) → amplificadores → alto-falantes. Nunca os amplificadores primeiro.', tags:['1. Fontes','2. Console','3. DSP / Crossover','4. Amplificadores'] },
+    { id:'d8', n:'08', title:'Verificar polaridade de cada canal (flip Ø)', brief:'Cancelamento de fase destrói o mix', crit:'a', critLabel:'CRÍTICO', detail:'Polaridade invertida em um microfone próximo a outro cancela frequências em comum. Na bateria: respeitar a <strong>Regra dos 3:1</strong> — distância entre microfones deve ser 3× a distância ao instrumento.', tags:['Checar Ø em cada canal','Regra 3:1 na bateria','Ouvir cancelamento de fase'] },
+    { id:'d9', n:'09', title:'Aplicar phantom 48V somente onde necessário', brief:'Confirmar tipo de microfone em cada canal antes', crit:'a', critLabel:'CRÍTICO', detail:'Condensadores requerem phantom 48V. Microfones de fita passivos são <strong>destruídos pelo phantom</strong>. Aplicar com o canal mutado para evitar transiente.', warn:'FITA PASSIVA + PHANTOM 48V = DESTRUÍDO. Irreversível.' },
+    { id:'d10', n:'10', title:'Filtro HP em todos os canais de microfone', brief:'Roll-off elimina bumps de palco e ruído DC', crit:'b', critLabel:'IMPORTANTE', detail:'Ativar o high-pass em cada canal de microfone: <em>80 Hz</em> para vocais e instrumentos de corpo inteiro, <em>100–120 Hz</em> para fontes sem sub-bass. Elimina vibração mecânica do palco.', tags:['Vocal: HP a 80 Hz','Instrumento sem sub: 100–120 Hz','Bumbo: HP a 30–40 Hz'] },
+    { id:'d11', n:'11', title:'Sends de monitor configurados em pré-fader', brief:'Mix independente por artista — obrigatório', crit:'a', critLabel:'CRÍTICO', detail:'Os sends para monitores devem ser <strong>pré-fader</strong>: o nível no monitor do artista é independente da mixagem do PA. Verificar que nenhum aux de monitor está em pós-fader por engano.', warn:'Aux em pós-fader: cada ajuste no FOH afeta o retorno do artista — erro que prejudica a performance.' },
+    { id:'d12', n:'12', title:'Estrutura de ganho — pré-amp canal a canal', brief:'Peaks entre −18 dBu e −6 dBu no VU meter', crit:'a', critLabel:'CRÍTICO', detail:'A habilidade mais importante do técnico de PA. Pedir a cada músico para tocar em <strong>dinâmica de show</strong>. Ajustar o gain para peaks entre <em>−18 dBu e −6 dBu</em>. Fader em 0 dB durante todo o soundcheck.', info:'Referência: Mic (−50 dBu) → Pré-amp (+4 dBu) → Conversor A/D (−18 a −12 dBFS). Cada estágio com headroom suficiente.', tags:['Peaks: −18 a −6 dBu','Fader: 0 dB','Dinâmica de show, não warm-up'] },
+  ]},
+  { id:2, num:'03', title:'Ring out e monitores', mod:'M07 · M09', steps:[
+    { id:'d13', n:'13', title:'Ring out em cada mix de monitor individualmente', brief:'Com palco vazio — antes do artista subir', crit:'a', critLabel:'CRÍTICO', detail:'Subir o ganho de cada mix até o feedback começar. Identificar a frequência com RTA. Cortar <em>3–6 dB</em> com Q estreito (Q = 8–15). Repetir até ter <strong>6–10 dB de headroom</strong>.', info:'Protocolo: suba o ganho → identifique → corte narrow −3 a −6 dB → repita. Pare com 6–10 dB de headroom.', tags:['Um mix por vez','RTA de alta resolução','Q estreito: 8–15','Headroom: 6–10 dB'] },
+    { id:'d14', n:'14', title:'Verificar posição das caixas de monitor × microfones', brief:'Posicionamento físico vale mais que qualquer EQ', crit:'b', critLabel:'IMPORTANTE', detail:'Para cardioides: face traseira (180°) apontada para o driver do monitor. Para supercardióides: o nulo está a ~126°. Posicionamento físico correto é a primeira e mais eficaz linha de defesa contra feedback.' },
+    { id:'d15', n:'15', title:'Verificar sistema IEM — frequência e nível', brief:'Receptor, fone e transmissor conferidos', crit:'b', critLabel:'IMPORTANTE', detail:'Cada receptor na frequência correta e sem interferência. Mix do IEM via sends pré-fader. Verificar nível de saída: SPL muito alto por longos períodos causa dano auditivo ao artista.', tags:['Frequência RF: sem interferência','Send: pré-fader confirmado','Nível: seguro para audição'] },
+    { id:'d16', n:'16', title:'Verificar alinhamento de tempo e EQ de sala', brief:'1 ms por 34,3 cm · EQ de sala remove, não adiciona', crit:'b', critLabel:'IMPORTANTE', detail:'Alinhamento temporal: <em>1 ms por 34,3 cm</em> de distância entre caixas. EQ de sala corrige resposta medida in situ com RTA — cortes em frequências problemáticas, nunca boost.', tags:['Delay: distância (cm) ÷ 34,3','RTA no ponto de escuta','Cortes narrow, não boosts'] },
+  ]},
+  { id:3, num:'04', title:'Soundcheck', mod:'M05 · M07 · M09', steps:[
+    { id:'d17', n:'17', title:'Bateria: bumdo → caixa → chimbal → toms → overheads', brief:'Nessa ordem. Sub-bass: só bumdo e baixo', crit:'b', critLabel:'IMPORTANTE', detail:'A bateria define a fundação rítmica e espectral. Sub-bass (20–80 Hz): âncora exclusiva do bumdo. Caixa: fundamental em 200 Hz–5 kHz. Chimbal: ar 8–16 kHz. Verificar polaridade entre todos os microfones.', tags:['Sub-bass: bumdo + baixo apenas','Regra 3:1 entre mics','Fase verificada'] },
+    { id:'d18', n:'18', title:'Baixo elétrico — ajustar relação com bumdo', brief:'Separar endereços espectrais para evitar acúmulo', crit:'b', critLabel:'IMPORTANTE', detail:'Bumdo e baixo competem em 60–200 Hz. Bumdo: sub <em>40–80 Hz</em> + ataque <em>3–5 kHz</em>. Baixo: corpo <em>80–200 Hz</em> + definição <em>700 Hz–1 kHz</em>.' },
+    { id:'d19', n:'19', title:'Guitarras e teclado — controlar low-mid', brief:'"Boxiness" em 200–500 Hz fecha o som', crit:'c', critLabel:'TÉCNICO', detail:'EQ cirúrgico em 200–500 Hz. Pan: guitarra rítmica em 20–40% L/R, não no centro. HP ativo em todos os instrumentos sem sub-bass.', tags:['Cortes em 200–400 Hz se abafado','Pan: 20–40% L/R','HP ativo sem sub'] },
+    { id:'d20', n:'20', title:'Vocais — inteligibilidade em 1 kHz, não suprimir', brief:'1 kHz é a presença — onde a voz corta o mix', crit:'a', critLabel:'CRÍTICO', detail:'O vocal principal é sempre no centro e tem prioridade de inteligibilidade. A região de <em>1 kHz</em> é a presença — não suprimir. Sibilância: cuidado em 5–8 kHz. Compressão: ratio <em>3:1–4:1</em>.', tags:['1 kHz: não cortar','Compressão: 3:1–4:1','Sibilância: 5–8 kHz','Vocal: centro'] },
+    { id:'d21', n:'21', title:'Mix de monitor por artista individualmente', brief:'O que o artista precisa ouvir — não o que o técnico acha', crit:'b', critLabel:'IMPORTANTE', detail:'Perguntar diretamente ao artista. O mix é funcional, não estético. Volume: não mais alto do que o necessário — evita feedback e protege a audição a longo prazo.' },
+    { id:'d22', n:'22', title:'Banda completa — equilíbrio e panoramização final', brief:'O mix individual não é o mix da banda', crit:'b', critLabel:'IMPORTANTE', detail:'Com todos juntos o mix muda completamente. Sub-bass e vocais no centro. Harmônicos: 20–40% L/R. Overheads e ambientes: 60–100% L/R. Verificar que o vocal corta o mix em toda a plateia.', tags:['Sub-bass + vocal: centro','Harmônicos: 20–40% L/R','Overheads: 60–100% L/R'] },
+    { id:'d23', n:'23', title:'Caminhar pelo venue — ouvir em 3 posições mínimas', brief:'O técnico não ouve o que a plateia ouve', crit:'b', critLabel:'IMPORTANTE', detail:'Frente, meio e fundo do espaço. Verificar cobertura uniforme, pontos de cancelamento e inteligibilidade vocal em toda a área. Ajustar EQ de sala com base nessas observações.' },
+    { id:'d24', n:'24', title:'Salvar snapshot do soundcheck', brief:'Com nome claro: data + artista', crit:'a', critLabel:'CRÍTICO', detail:'Snapshot salvo com nome identificável. Permite recall imediato se alguém alterar o console durante a abertura ou em caso de reinicialização. Salvar também no backup.', tags:['Snapshot: data + artista','Backup: atualizado'] },
+  ]},
+  { id:4, num:'05', title:'Pré-abertura', mod:'M01 · M09', steps:[
+    { id:'d25', n:'25', title:'Substituir baterias de todos os transmissores', brief:'Sempre novas — independente do nível atual', crit:'a', critLabel:'CRÍTICO', detail:'Antes da abertura dos portões: baterias novas em todos os transmissores sem exceção. O nível da bateria anterior não importa.' },
+    { id:'d26', n:'26', title:'Confirmar canais de comunicação com a equipe', brief:'Rádio, intercom — sinais de início e emergência acordados', crit:'b', critLabel:'IMPORTANTE', detail:'Canal de rádio definido, sinais de início de show e pausa acordados com toda a equipe. Definir quem tem autoridade para pedir pausa técnica no show.' },
+    { id:'d27', n:'27', title:'Verificar SPL durante a entrada do público', brief:'Ruído de fundo muda a referência de nível', crit:'b', critLabel:'IMPORTANTE', detail:'O ruído da plateia muda a percepção de nível consideravelmente. Ajustar a referência antes do show começar para não ser pego de surpresa.' },
+    { id:'d28', n:'28', title:'Posicionamento no FOH — visão do palco e da plateia', brief:'Proatividade: ver o problema antes que aconteça', crit:'c', critLabel:'TÉCNICO', detail:'O BERA enfatiza proatividade e antecipação. Atenção dividida entre o console, o palco (posição dos músicos e microfones) e a plateia (reação). Vocalista que se afasta do mic pede ajuste imediato.' },
+  ]},
+];
+
+// ═══════════════════════════════════════════
+//  CHECKLIST DATA — DEPOIS
+// ═══════════════════════════════════════════
+const DEPOIS = [
+  { id:'gd1', icon:'📝', title:'Documentação técnica', color:'rgba(57,224,122,.07)', items:[
+    { id:'p1', title:'Registrar gains utilizados por canal', lv:'re', mod:'M07', note:'Valores de referência para o próximo show do mesmo artista. Economiza tempo de soundcheck.' },
+    { id:'p2', title:'Registrar frequências RF utilizadas', lv:'re', mod:'M07', rf:true, note:'Salvar no Coordenador RF para reutilizar no próximo show no mesmo venue ou cidade.' },
+    { id:'p3', title:'Registrar observações técnicas do show', lv:'bo', mod:'M01', note:'Problemas ocorridos, soluções aplicadas, configurações que funcionaram especialmente bem.' },
+    { id:'p4', title:'Exportar e fazer backup do show file', lv:'re', mod:'M07', note:'Show file salvo em pendrive ou nuvem. Nunca depender só da memória do console.' },
+  ]},
+  { id:'gd2', icon:'📦', title:'Desmontagem segura', color:'rgba(59,139,212,.07)', items:[
+    { id:'p5', title:'Desligar sistema na ordem inversa (amps primeiro)', lv:'ob', mod:'M07', note:'Amplificadores → DSP/Crossover → Console → Fontes. Inverso da ligação.' },
+    { id:'p6', title:'Retirar phantom 48V antes de desligar o console', lv:'ob', mod:'M07', warn:'Desligar o console com phantom ativo em canais de fita gera transiente de desligamento — pode danificar microfones.' },
+    { id:'p7', title:'Recolher todos os transmissores e fones IEM', lv:'ob', mod:'M07', note:'Artistas frequentemente saem com transmissores no bolso. Confirmar antes que saiam do palco.' },
+    { id:'p8', title:'Organizar cabos com enrolamento correto (técnica do 8)', lv:'re', mod:'M01', note:'Cabos enrolados corretamente duram anos. Enrolados errado, meses.' },
+    { id:'p9', title:'Conferir inventário ao embalar — nada fica no venue', lv:'ob', mod:'M01', note:'Um inventário rápido vale o tempo. Equipamento esquecido no venue raramente volta.' },
+  ]},
+  { id:'gd3', icon:'✅', title:'Relatório e encerramento', color:'rgba(245,166,35,.07)', items:[
+    { id:'p10', title:'Comunicar problemas técnicos à produção', lv:'re', mod:'M01', note:'Comunicação profissional e objetiva. Documentar por escrito se houver impacto contratual.' },
+    { id:'p11', title:'Enviar relatório técnico ao contratante', lv:'bo', mod:'M01', note:'Gains, frequências RF, observações e recomendações para o próximo show. Diferencial profissional.' },
+    { id:'p12', title:'Avaliar o próprio desempenho — o que melhorar', lv:'bo', mod:'M01', note:'O BERA chama isso de desenvolvimento contínuo. Profissionais que se avaliam evoluem mais rápido.' },
+  ]},
+];
+
+// ═══════════════════════════════════════════
 //  STATE
-// ─────────────────────────────────────────────
-let currentPhase = 0;
-let done = {};
-let timerInterval = null;
-let timerSeconds = 0;
+// ═══════════════════════════════════════════
+let done        = {};
+let currentPhase = 'antes';
+let protoPhaseIdx = 0;
+let timerSecs   = 0;
 let timerRunning = false;
+let timerInterval = null;
 let phaseTimers = {};
 let deferredPrompt = null;
 
-// Load from localStorage
 function loadState() {
   try {
-    const saved = localStorage.getItem('bera_done');
-    if (saved) done = JSON.parse(saved);
-    const savedTimers = localStorage.getItem('bera_timers');
-    if (savedTimers) phaseTimers = JSON.parse(savedTimers);
-    const savedPhase = localStorage.getItem('bera_phase');
-    if (savedPhase !== null) currentPhase = parseInt(savedPhase);
+    const d = localStorage.getItem('bs_done');
+    if (d) done = JSON.parse(d);
+    const t = localStorage.getItem('bs_timers');
+    if (t) phaseTimers = JSON.parse(t);
+    const ph = localStorage.getItem('bs_phase');
+    if (ph) currentPhase = ph;
+    const pp = localStorage.getItem('bs_proto_phase');
+    if (pp) protoPhaseIdx = parseInt(pp);
+    const m = localStorage.getItem('bs_meta');
+    if (m) {
+      const meta = JSON.parse(m);
+      if (meta.nome)  document.getElementById('evNome').value  = meta.nome;
+      if (meta.data)  document.getElementById('evData').value  = meta.data;
+      if (meta.venue) document.getElementById('evVenue').value = meta.venue;
+      if (meta.tec)   document.getElementById('evTec').value   = meta.tec;
+    }
   } catch(e) {}
 }
 
 function saveState() {
   try {
-    localStorage.setItem('bera_done', JSON.stringify(done));
-    localStorage.setItem('bera_timers', JSON.stringify(phaseTimers));
-    localStorage.setItem('bera_phase', currentPhase);
+    localStorage.setItem('bs_done', JSON.stringify(done));
+    localStorage.setItem('bs_timers', JSON.stringify(phaseTimers));
+    localStorage.setItem('bs_phase', currentPhase);
+    localStorage.setItem('bs_proto_phase', protoPhaseIdx);
   } catch(e) {}
 }
 
-// ─────────────────────────────────────────────
-//  TOTAL STEPS
-// ─────────────────────────────────────────────
-function totalSteps() {
-  return PHASES.reduce((s, p) => s + p.steps.length, 0);
+function saveMeta() {
+  try {
+    localStorage.setItem('bs_meta', JSON.stringify({
+      nome:  document.getElementById('evNome').value,
+      data:  document.getElementById('evData').value,
+      venue: document.getElementById('evVenue').value,
+      tec:   document.getElementById('evTec').value,
+    }));
+  } catch(e) {}
 }
 
-function totalDone() {
-  return Object.values(done).filter(Boolean).length;
-}
-
-// ─────────────────────────────────────────────
-//  RENDER
-// ─────────────────────────────────────────────
-function renderTabs() {
-  const container = document.getElementById('phaseTabs');
-  const phaseDone = PHASES.map(p => p.steps.every(s => done[s.id]));
-  container.innerHTML = PHASES.map((p, i) => `
-    <div class="phase-tab ${i === currentPhase ? 'active' : ''} ${phaseDone[i] ? 'done' : ''}"
-         onclick="goToPhase(${i})">
-      <span class="tab-num">${phaseDone[i] ? '✓' : p.num}</span>
-      <span class="tab-label">${p.title}</span>
+// ═══════════════════════════════════════════
+//  RENDER HELPERS
+// ═══════════════════════════════════════════
+function rfCard() {
+  return `<a class="rf-card" href="coordenador-rf.html" target="_blank">
+    <div class="rf-ico">COORD<br>RF</div>
+    <div style="flex:1">
+      <div class="rf-lbl">FERRAMENTA BERA — EXTRAS</div>
+      <div class="rf-ttl">Coordenador RF + TinySA</div>
+      <div class="rf-dsc">Offline · Calcula IM3 · Até 16 canais simultâneos</div>
     </div>
-  `).join('');
+    <span class="rf-arr">›</span>
+  </a>`;
 }
 
-function renderPhase() {
-  const phase = PHASES[currentPhase];
-  document.getElementById('phaseNumLabel').textContent = `FASE ${phase.num}`;
-  document.getElementById('phaseTitle').textContent = phase.title;
-  document.getElementById('phaseModule').textContent = phase.module;
-
-  const stepsEl = document.getElementById('stepsList');
-  stepsEl.innerHTML = phase.steps.map(step => renderStep(step)).join('');
-
-  updatePhaseProgress();
-  updateGlobalProgress();
-  updateTimer();
-  updateNavBtns();
-  renderTabs();
-  scrollToTop();
-}
-
-function renderStep(step) {
-  const isDone = done[step.id];
-  const critClass = `crit-${step.crit}`;
-  const detailHtml = buildDetail(step);
-
-  return `<div class="step-item ${isDone ? 'done' : ''}" id="item_${step.id}">
-    <div class="step-head" onclick="toggleStep('${step.id}')">
-      <div class="step-check ${isDone ? 'done' : ''}" onclick="event.stopPropagation(); toggleDone('${step.id}')"></div>
-      <div class="step-body-wrap">
-        <div class="step-num">ETAPA ${step.n}</div>
-        <div class="step-title">${step.title}</div>
-        ${step.brief ? `<div class="step-brief">${step.brief}</div>` : ''}
+// ═══════════════════════════════════════════
+//  RENDER CHECKLIST (Antes / Depois)
+// ═══════════════════════════════════════════
+function renderChkGroup(group) {
+  const doneN = group.items.filter(i => done[i.id]).length;
+  const items = group.items.map(item => {
+    const isDone = done[item.id];
+    const badgeClass = item.lv === 'ob' ? 'badge-ob' : item.lv === 're' ? 'badge-re' : 'badge-bo';
+    const badgeLabel = item.lv === 'ob' ? 'OBRIG.' : item.lv === 're' ? 'RECOM.' : 'BÔNUS';
+    return `<div class="chk-item lv-${item.lv === 'ob' ? 'obrigatorio' : item.lv === 're' ? 'recomendado' : 'bonus'} ${isDone ? 'done' : ''}" id="ci_${item.id}">
+      <div class="chk-box" onclick="toggleChk('${item.id}')"></div>
+      <div class="chk-content">
+        <div class="chk-top">
+          <span class="chk-title">${item.title}</span>
+          <span class="chk-badge ${badgeClass}">${badgeLabel}</span>
+        </div>
+        <div class="chk-mod">${item.mod}</div>
+        ${item.warn ? `<div class="chk-warn">${item.warn}</div>` : ''}
+        ${item.note && !item.warn ? `<div class="chk-note">${item.note}</div>` : ''}
+        ${item.rf ? rfCard() : ''}
       </div>
-      <div class="step-right">
-        <span class="crit ${critClass}">${step.critLabel}</span>
-        <span class="chevron">▾</span>
+    </div>`;
+  }).join('');
+
+  return `<div class="group open" id="grp_${group.id}">
+    <div class="group-header" onclick="toggleGrp('${group.id}')">
+      <div class="gh-left">
+        <div class="group-icon" style="background:${group.color}">${group.icon}</div>
+        <span class="group-title">${group.title}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="group-done" id="gd_${group.id}">${doneN}/${group.items.length}</span>
+        <span class="group-chev">▾</span>
       </div>
     </div>
-    <div class="step-detail">${detailHtml}</div>
+    <div class="group-items">${items}</div>
   </div>`;
 }
 
-function buildDetail(step) {
-  let html = '';
-  if (step.warn) html += `<div class="warn-box">${step.warn}</div>`;
-  html += `<div class="detail-text">${step.detail}</div>`;
-  if (step.info) html += `<div class="info-box">${step.info}</div>`;
-  if (step.rf) {
-    html += `<a class="rf-callout" href="coordenador-rf.html" target="_blank">
-      <div class="rf-icon">COORD<br>RF</div>
-      <div class="rf-content">
-        <div class="rf-label">FERRAMENTA BERA — EXTRAS</div>
-        <div class="rf-title">Coordenador RF + TinySA</div>
-        <div class="rf-desc">Offline · Calcula IM3 · Até 16 canais simultâneos · Visualização espectral</div>
+function renderChklists() {
+  document.getElementById('grupos-antes').innerHTML  = ANTES.map(renderChkGroup).join('');
+  document.getElementById('grupos-depois').innerHTML = DEPOIS.map(renderChkGroup).join('');
+}
+
+// ═══════════════════════════════════════════
+//  RENDER PROTOCOL
+// ═══════════════════════════════════════════
+function renderProto() {
+  const phase = PROTO_PHASES[protoPhaseIdx];
+  document.getElementById('protoPhaseLbl').textContent   = `FASE ${phase.num} DE ${PROTO_PHASES.length}`;
+  document.getElementById('protoPhaseTitle').textContent = phase.title;
+  document.getElementById('protoPhaseMod').textContent   = phase.mod;
+
+  // Step nav pills
+  const nav = document.getElementById('stepNav');
+  nav.innerHTML = PROTO_PHASES.map((p, i) => {
+    const allDone = p.steps.every(s => done[s.id]);
+    const cls = i === protoPhaseIdx ? 'active' : allDone ? 'done-p' : '';
+    return `<button class="snav-btn ${cls}" onclick="goProtoPhase(${i})">${p.num} ${p.title}</button>`;
+  }).join('');
+
+  // Steps
+  const stepsList = document.getElementById('stepsList');
+  stepsList.innerHTML = phase.steps.map(step => {
+    const isDone = done[step.id];
+    let detail = '';
+    if (step.warn) detail += `<div class="d-warn">${step.warn}</div>`;
+    detail += `<div class="detail-txt">${step.detail}</div>`;
+    if (step.info) detail += `<div class="d-info">${step.info}</div>`;
+    if (step.rf)   detail += rfCard();
+    if (step.tags) detail += `<div class="d-tags">${step.tags.map(t=>`<span class="d-tag">${t}</span>`).join('')}</div>`;
+
+    return `<div class="step-item ${isDone ? 'sdone' : ''}" id="si_${step.id}">
+      <div class="step-head" onclick="toggleStep('${step.id}')">
+        <div class="step-chk ${isDone ? 'done' : ''}" onclick="event.stopPropagation();toggleProtoStep('${step.id}')"></div>
+        <div class="step-body">
+          <div class="step-n">ETAPA ${step.n}</div>
+          <div class="step-title">${step.title}</div>
+          <div class="step-brief">${step.brief}</div>
+        </div>
+        <div class="step-right">
+          <span class="crit crit-${step.crit}">${step.critLabel}</span>
+          <span class="step-chev">▾</span>
+        </div>
       </div>
-      <span class="rf-arrow">›</span>
-    </a>`;
+      <div class="step-detail">${detail}</div>
+    </div>`;
+  }).join('');
+
+  // Phase progress
+  const phaseDone = phase.steps.filter(s => done[s.id]).length;
+  const phasePct  = (phaseDone / phase.steps.length) * 100;
+  document.getElementById('protoSegFill').style.width = phasePct + '%';
+
+  // Nav buttons
+  document.getElementById('btnPrev').style.visibility = protoPhaseIdx === 0 ? 'hidden' : 'visible';
+  const btnNext = document.getElementById('btnNext');
+  const allDone = PROTO_PHASES.every(p => p.steps.every(s => done[s.id]));
+  if (protoPhaseIdx === PROTO_PHASES.length - 1) {
+    btnNext.textContent = 'SHOW PRONTO ✓';
+    btnNext.disabled = !allDone;
+  } else {
+    btnNext.textContent = 'PRÓXIMA →';
+    btnNext.disabled = false;
   }
-  if (step.tags && step.tags.length) {
-    html += `<div class="tags">${step.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>`;
-  }
-  return html;
+
+  // Complete screen
+  document.getElementById('stepsList').style.display    = allDone ? 'none' : 'block';
+  document.getElementById('completeScreen').classList.toggle('show', allDone);
+
+  // Timer
+  timerSecs    = phaseTimers[protoPhaseIdx] || 0;
+  timerRunning = false;
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  renderTimer();
+  scrollToTop();
 }
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════
 //  INTERACTIONS
-// ─────────────────────────────────────────────
-function toggleStep(id) {
-  const item = document.getElementById(`item_${id}`);
-  item.classList.toggle('open');
-}
-
-function toggleDone(id) {
+// ═══════════════════════════════════════════
+function toggleChk(id) {
   done[id] = !done[id];
   saveState();
-  const item = document.getElementById(`item_${id}`);
-  const check = item.querySelector('.step-check');
-  if (done[id]) {
-    item.classList.add('done');
-    check.classList.add('done');
-    // Close if open
-    item.classList.remove('open');
-  } else {
-    item.classList.remove('done');
-    check.classList.remove('done');
+  const el = document.getElementById('ci_' + id);
+  if (el) {
+    el.classList.toggle('done', done[id]);
+    el.querySelector('.chk-box').classList.toggle('done', done[id]);
   }
-  updatePhaseProgress();
-  updateGlobalProgress();
-  renderTabs();
-  checkAllDone();
+  // Update group count
+  updateGroupCount(id);
+  updateStats();
 }
 
-function updatePhaseProgress() {
-  const phase = PHASES[currentPhase];
-  const total = phase.steps.length;
-  const doneCount = phase.steps.filter(s => done[s.id]).length;
-  const pct = total > 0 ? (doneCount / total) * 100 : 0;
-  document.getElementById('phaseBar').style.width = pct + '%';
-}
-
-function updateGlobalProgress() {
-  const total = totalSteps();
-  const doneCount = totalDone();
-  const pct = total > 0 ? (doneCount / total) * 100 : 0;
-  document.getElementById('globalBar').style.width = pct + '%';
-  document.getElementById('globalCount').textContent = `${doneCount} / ${total}`;
-}
-
-function checkAllDone() {
-  if (totalDone() === totalSteps()) {
-    setTimeout(() => {
-      document.getElementById('phaseView').style.display = 'none';
-      document.getElementById('bottomBar').style.display = 'none';
-      document.getElementById('completeScreen').classList.add('show');
-    }, 400);
+function updateGroupCount(itemId) {
+  const allGroups = [...ANTES, ...DEPOIS];
+  for (const g of allGroups) {
+    if (g.items.find(i => i.id === itemId)) {
+      const doneN = g.items.filter(i => done[i.id]).length;
+      const el = document.getElementById('gd_' + g.id);
+      if (el) el.textContent = `${doneN}/${g.items.length}`;
+      return;
+    }
   }
 }
 
-function goToPhase(i) {
-  stopTimer();
-  currentPhase = i;
+function toggleGrp(id) {
+  const el = document.getElementById('grp_' + id);
+  if (el) el.classList.toggle('open');
+}
+
+function toggleProtoStep(id) {
+  done[id] = !done[id];
   saveState();
-  document.getElementById('phaseView').style.display = 'block';
-  document.getElementById('completeScreen').classList.remove('show');
-  document.getElementById('bottomBar').style.display = 'flex';
-  renderPhase();
-}
-
-function prevPhase() {
-  if (currentPhase > 0) goToPhase(currentPhase - 1);
-}
-
-function nextPhase() {
-  if (currentPhase < PHASES.length - 1) goToPhase(currentPhase + 1);
-}
-
-function updateNavBtns() {
-  document.getElementById('btnPrev').style.display = currentPhase === 0 ? 'none' : '';
-  const next = document.getElementById('btnNext');
-  if (currentPhase === PHASES.length - 1) {
-    next.textContent = 'SHOW PRONTO ✓';
-    next.disabled = totalDone() < totalSteps();
-  } else {
-    next.textContent = 'PRÓXIMA FASE →';
-    next.disabled = false;
+  const si = document.getElementById('si_' + id);
+  if (si) {
+    si.classList.toggle('sdone', done[id]);
+    si.querySelector('.step-chk').classList.toggle('done', done[id]);
+    if (done[id]) si.classList.remove('open');
   }
+  // Update phase progress
+  const phase = PROTO_PHASES[protoPhaseIdx];
+  const phaseDone = phase.steps.filter(s => done[s.id]).length;
+  document.getElementById('protoSegFill').style.width = (phaseDone / phase.steps.length * 100) + '%';
+
+  const allDone = PROTO_PHASES.every(p => p.steps.every(s => done[s.id]));
+  document.getElementById('stepsList').style.display    = allDone ? 'none' : 'block';
+  document.getElementById('completeScreen').classList.toggle('show', allDone);
+  document.getElementById('btnNext').disabled = protoPhaseIdx === PROTO_PHASES.length - 1 && !allDone;
+
+  // Update nav pills
+  const pills = document.querySelectorAll('.snav-btn');
+  PROTO_PHASES.forEach((p, i) => {
+    const allPhaseDone = p.steps.every(s => done[s.id]);
+    if (pills[i]) {
+      pills[i].className = 'snav-btn ' + (i === protoPhaseIdx ? 'active' : allPhaseDone ? 'done-p' : '');
+    }
+  });
+  updateStats();
+}
+
+function toggleStep(id) {
+  const el = document.getElementById('si_' + id);
+  if (el) el.classList.toggle('open');
+}
+
+function goProtoPhase(i) {
+  stopTimer();
+  protoPhaseIdx = i;
+  saveState();
+  renderProto();
+}
+
+function prevProtoPhase() { if (protoPhaseIdx > 0) goProtoPhase(protoPhaseIdx - 1); }
+function nextProtoPhase() { if (protoPhaseIdx < PROTO_PHASES.length - 1) goProtoPhase(protoPhaseIdx + 1); }
+
+// ═══════════════════════════════════════════
+//  PHASE SWITCHING
+// ═══════════════════════════════════════════
+function showPhase(phase) {
+  currentPhase = phase;
+  saveState();
+
+  document.querySelectorAll('.phase-view').forEach(v => v.classList.remove('show'));
+  document.getElementById('view-' + phase).classList.add('show');
+
+  document.querySelectorAll('.phase-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.phase-tab[data-phase="${phase}"]`).classList.add('active');
+
+  document.getElementById('protoNav').classList.toggle('hidden', phase !== 'durante');
+
+  if (phase === 'durante') renderProto();
+  updateStats();
+  scrollToTop();
 }
 
 function scrollToTop() {
   document.getElementById('mainContent').scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function resetAll() {
-  done = {};
-  phaseTimers = {};
-  currentPhase = 0;
-  timerSeconds = 0;
-  saveState();
-  document.getElementById('phaseView').style.display = 'block';
-  document.getElementById('completeScreen').classList.remove('show');
-  document.getElementById('bottomBar').style.display = 'flex';
-  renderPhase();
+// ═══════════════════════════════════════════
+//  STATS
+// ═══════════════════════════════════════════
+function countChk(groups) {
+  const all   = groups.flatMap(g => g.items);
+  return { total: all.length, doneN: all.filter(i => done[i.id]).length };
 }
 
-// ─────────────────────────────────────────────
+function countProto() {
+  const all = PROTO_PHASES.flatMap(p => p.steps);
+  return { total: all.length, doneN: all.filter(s => done[s.id]).length };
+}
+
+function updateStats() {
+  const a = countChk(ANTES);
+  const d = countProto();
+  const p = countChk(DEPOIS);
+
+  const pctA = a.total > 0 ? a.doneN / a.total * 100 : 0;
+  const pctD = d.total > 0 ? d.doneN / d.total * 100 : 0;
+  const pctP = p.total > 0 ? p.doneN / p.total * 100 : 0;
+
+  document.getElementById('fillAntes').style.width   = pctA + '%';
+  document.getElementById('fillDurante').style.width = pctD + '%';
+  document.getElementById('fillDepois').style.width  = pctP + '%';
+
+  document.getElementById('cntAntes').textContent   = `${a.doneN}/${a.total}`;
+  document.getElementById('cntDurante').textContent = `${d.doneN}/${d.total}`;
+  document.getElementById('cntDepois').textContent  = `${p.doneN}/${p.total}`;
+
+  const total = a.total + d.total + p.total;
+  const doneN = a.doneN + d.doneN + p.doneN;
+  const pct   = total > 0 ? Math.round(doneN / total * 100) : 0;
+  document.getElementById('globalPct').textContent = pct + '%';
+}
+
+// ═══════════════════════════════════════════
 //  TIMER
-// ─────────────────────────────────────────────
-function updateTimer() {
-  timerSeconds = phaseTimers[currentPhase] || 0;
-  timerRunning = false;
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = null;
-  renderTimer();
-}
-
+// ═══════════════════════════════════════════
 function renderTimer() {
-  const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
-  const s = (timerSeconds % 60).toString().padStart(2, '0');
-  document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  const m = Math.floor(timerSecs / 60).toString().padStart(2,'0');
+  const s = (timerSecs % 60).toString().padStart(2,'0');
+  document.getElementById('timerVal').textContent = `${m}:${s}`;
   const btn = document.getElementById('timerBtn');
-  if (timerRunning) {
-    btn.textContent = 'PAUSAR';
-    btn.classList.add('running');
-  } else {
-    btn.textContent = timerSeconds > 0 ? 'CONTINUAR' : 'INICIAR';
-    btn.classList.remove('running');
-  }
+  btn.textContent = timerRunning ? 'PAUSAR' : timerSecs > 0 ? 'CONTINUAR' : 'INICIAR';
+  btn.classList.toggle('running', timerRunning);
 }
 
 function toggleTimer() {
   if (timerRunning) {
-    timerRunning = false;
-    clearInterval(timerInterval);
-    timerInterval = null;
+    stopTimer();
   } else {
     timerRunning = true;
     timerInterval = setInterval(() => {
-      timerSeconds++;
-      phaseTimers[currentPhase] = timerSeconds;
+      timerSecs++;
+      phaseTimers[protoPhaseIdx] = timerSecs;
       renderTimer();
     }, 1000);
   }
@@ -1545,65 +998,73 @@ function toggleTimer() {
 }
 
 function stopTimer() {
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = null;
   timerRunning = false;
-  if (phaseTimers[currentPhase] !== undefined) {
-    phaseTimers[currentPhase] = timerSeconds;
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  phaseTimers[protoPhaseIdx] = timerSecs;
+}
+
+// ═══════════════════════════════════════════
+//  RESET
+// ═══════════════════════════════════════════
+function openResetModal() { document.getElementById('resetModal').classList.add('show'); }
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('resetModal')) {
+    document.getElementById('resetModal').classList.remove('show');
   }
 }
 
-// ─────────────────────────────────────────────
+function executeReset() {
+  document.getElementById('resetModal').classList.remove('show');
+  done = {}; phaseTimers = {}; protoPhaseIdx = 0;
+  timerSecs = 0; timerRunning = false;
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  ['evNome','evData','evVenue','evTec'].forEach(id => document.getElementById(id).value = '');
+  try { localStorage.removeItem('bs_meta'); } catch(e) {}
+  saveState();
+  renderChklists();
+  if (currentPhase === 'durante') renderProto();
+  updateStats();
+}
+
+// ═══════════════════════════════════════════
 //  PWA INSTALL
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════
 window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const shown = localStorage.getItem('bera_install_dismissed');
-  if (!shown) {
-    setTimeout(() => {
-      document.getElementById('installBanner').classList.add('show');
-    }, 3000);
-  }
+  e.preventDefault(); deferredPrompt = e;
+  const shown = localStorage.getItem('bs_install_dismissed');
+  if (!shown) setTimeout(() => document.getElementById('installBanner').classList.add('show'), 3000);
 });
 
 document.getElementById('btnInstall').addEventListener('click', () => {
   document.getElementById('installBanner').classList.remove('show');
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(r => {
-      deferredPrompt = null;
-    });
-  }
+  if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
 });
 
 document.getElementById('btnDismiss').addEventListener('click', () => {
   document.getElementById('installBanner').classList.remove('show');
-  localStorage.setItem('bera_install_dismissed', '1');
+  try { localStorage.setItem('bs_install_dismissed','1'); } catch(e) {}
 });
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════
 //  SERVICE WORKER
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  });
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 }
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════
 //  INIT
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════
 loadState();
-renderPhase();
-updateGlobalProgress();
+renderChklists();
+showPhase(currentPhase);
+updateStats();
 
 setTimeout(() => {
   document.getElementById('splash').classList.add('hide');
-  setTimeout(() => {
-    document.getElementById('splash').remove();
-  }, 500);
-}, 1400);
+  setTimeout(() => document.getElementById('splash').remove(), 500);
+}, 1300);
 </script>
 </body>
 </html>

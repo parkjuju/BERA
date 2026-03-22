@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BERA — Coordenador RF</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0b0c0f;
+  --surface: #111318;
+  --card:    #161a22;
+  --card2:   #1c2130;
+  --border:  #2a3347;
+  --border2: #3a4660;
+  --amber:   #f5a623;
+  --amber2:  #ffcc6b;
+  --cyan:    #00d4ff;
+  --green:   #39e07a;
+  --red:     #ff4757;
+  --purple:  #a78bfa;
+  --yellow:  #ffd60a;
+  --white:   #f0f2f7;
+  --text:    #d8e0f0;
+  --muted:   #8a96b0;
+  --mono:    'IBM Plex Mono', monospace;
+  --sans:    'IBM Plex Sans', sans-serif;
+  --display: 'Bebas Neue', sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);display:flex;flex-direction:column;font-size:14px;}
+
+/* ── HEADER ── */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;height:52px;
+  background:#0d0f13;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;gap:12px;
+  position:relative;z-index:50;
+}
+.brand{display:flex;align-items:baseline;gap:8px;flex-shrink:0;}
+.brand-name{font-family:var(--display);font-size:24px;letter-spacing:0.06em;color:var(--amber);line-height:1;}
+.brand-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:0.1em;}
+.header-tabs{display:flex;height:100%;gap:2px;}
+.tab{
+  display:flex;align-items:center;gap:8px;padding:0 18px;
+  font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:0.06em;
+  color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
+  transition:all 0.2s;user-select:none;white-space:nowrap;
+}
+.tab:hover{color:var(--white);}
+.tab.active{color:var(--amber);border-bottom-color:var(--amber);}
+.tab .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.tab-coord .dot{background:var(--amber);}
+.tab-tinysa .dot{background:var(--cyan);}
+.tab.active .dot{animation:blink 1.5s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.status-badge{
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  padding:5px 12px;border-radius:3px;border:1px solid;
+  letter-spacing:0.08em;white-space:nowrap;flex-shrink:0;
+}
+.status-ok{background:rgba(57,224,122,0.12);border-color:rgba(57,224,122,0.35);color:var(--green);}
+.status-warn{background:rgba(255,71,87,0.12);border-color:rgba(255,71,87,0.35);color:var(--red);}
+.status-idle{background:rgba(138,150,176,0.1);border-color:var(--border);color:var(--muted);}
+
+/* ── LAYOUT ── */
+.page{display:none;flex:1;min-height:0;}
+.page.active{display:flex;flex-direction:column;}
+
+/* ── COORDINATOR PAGE ── */
+.coord-layout{display:grid;grid-template-columns:300px 1fr;flex:1;min-height:0;overflow:hidden;}
+.coord-sidebar{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;}
+.coord-main{display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;}
+
+/* Scrollbar styling */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ── SIDEBAR SECTIONS ── */
+.sidebar-section{padding:14px 16px;border-bottom:1px solid var(--border);}
+.sidebar-title{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:0.14em;color:var(--amber);
+  text-transform:uppercase;margin-bottom:12px;
+}
+
+/* Band selector */
+.band-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.band-btn{
+  padding:8px 10px;background:var(--card2);
+  border:1px solid var(--border);border-radius:3px;
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  cursor:pointer;transition:all 0.18s;text-align:left;line-height:1.45;
+}
+.band-btn:hover{border-color:var(--border2);color:var(--text);}
+.band-btn.selected{background:rgba(245,166,35,0.1);border-color:rgba(245,166,35,0.45);color:var(--amber);}
+.band-btn .b-name{font-size:11px;font-weight:600;display:block;}
+.band-btn .b-range{font-size:10px;opacity:0.7;display:block;margin-top:1px;}
+.band-btn .b-note{font-size:9px;color:var(--red);display:block;margin-top:2px;}
+.custom-band-row{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px;}
+
+/* Systems list */
+.systems-list{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+.system-row{
+  display:flex;align-items:center;gap:7px;padding:8px 10px;
+  background:var(--card2);border:1px solid var(--border);border-radius:3px;
+  transition:border-color 0.2s;
+}
+.system-row.conflict{border-color:rgba(255,71,87,0.45);background:rgba(255,71,87,0.05);}
+.system-row.ok{border-color:rgba(57,224,122,0.3);}
+.sys-num{
+  font-family:var(--display);font-size:17px;
+  color:var(--muted);width:20px;flex-shrink:0;line-height:1;text-align:center;
+}
+.sys-color{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sys-freq-input{
+  flex:1;background:none;border:none;
+  font-family:var(--mono);font-size:13px;color:var(--white);
+  outline:none;min-width:0;
+}
+.sys-freq-input::placeholder{color:var(--muted);font-size:12px;}
+.sys-unit{font-family:var(--mono);font-size:10px;color:var(--muted);flex-shrink:0;}
+.sys-status{font-size:13px;flex-shrink:0;width:16px;text-align:center;}
+.sys-remove{
+  width:22px;height:22px;background:none;border:none;
+  color:var(--muted);cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:color 0.2s;border-radius:3px;line-height:1;
+}
+.sys-remove:hover{color:var(--red);background:rgba(255,71,87,0.12);}
+
+/* Buttons */
+.btn-add{
+  width:100%;padding:9px;background:none;
+  border:1px dashed var(--border2);border-radius:3px;
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  cursor:pointer;transition:all 0.2s;letter-spacing:0.07em;
+}
+.btn-add:hover{border-color:var(--amber);color:var(--amber);}
+.btn-suggest{
+  width:100%;padding:9px;
+  background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.35);
+  border-radius:3px;font-family:var(--mono);font-size:11px;font-weight:600;
+  color:var(--amber);cursor:pointer;transition:all 0.2s;letter-spacing:0.07em;
+}
+.btn-suggest:hover{background:rgba(245,166,35,0.18);}
+.btn-suggest:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-clear{
+  width:100%;padding:8px;background:none;
+  border:1px solid var(--border);border-radius:3px;
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  cursor:pointer;transition:all 0.2s;letter-spacing:0.07em;
+}
+.btn-clear:hover{border-color:var(--border2);color:var(--text);}
+.btn-row{display:flex;flex-direction:column;gap:5px;margin-top:14px;}
+
+/* Conflicts */
+.conflict-list{display:flex;flex-direction:column;gap:4px;}
+.conflict-item{
+  padding:8px 10px;background:rgba(255,71,87,0.07);
+  border:1px solid rgba(255,71,87,0.18);border-radius:3px;
+  font-family:var(--mono);font-size:11px;color:#ff9aa5;line-height:1.55;
+}
+.conflict-item .c-type{
+  color:var(--red);font-weight:600;font-size:10px;
+  letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;
+}
+.no-conflict{
+  font-family:var(--mono);font-size:11px;color:var(--green);
+  padding:10px;background:rgba(57,224,122,0.07);
+  border:1px solid rgba(57,224,122,0.18);border-radius:3px;text-align:center;
+}
+
+/* ── MAIN AREA ── */
+.spectrum-panel{padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.panel-title{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:0.14em;color:var(--muted);text-transform:uppercase;
+  margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;
+}
+.panel-title span:last-child{font-size:11px;color:var(--muted);}
+.spectrum-wrap{
+  position:relative;width:100%;height:120px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:4px;overflow:hidden;margin-bottom:6px;
+}
+.spectrum-canvas{position:absolute;inset:0;width:100%;height:100%;}
+.freq-axis{display:flex;justify-content:space-between;padding:0 2px;}
+.freq-tick{font-family:var(--mono);font-size:10px;color:var(--muted);}
+.band-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+.legend-item{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:var(--muted);}
+.legend-dot{width:8px;height:8px;border-radius:2px;}
+
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px 20px;}
+.info-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:4px;padding:14px;overflow:auto;max-height:280px;
+}
+.info-card-title{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:0.14em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;
+}
+.im3-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;}
+.im3-table th{
+  text-align:left;padding:5px 8px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  color:var(--muted);font-size:10px;letter-spacing:0.07em;text-transform:uppercase;
+  white-space:nowrap;
+}
+.im3-table td{padding:5px 8px;border:1px solid var(--border);}
+.im3-table tr:hover td{background:rgba(255,255,255,0.02);}
+.im3-ok{color:var(--green);}
+.im3-warn{color:var(--red);}
+
+/* Tips */
+.tips-list{display:flex;flex-direction:column;gap:8px;}
+.tip{display:flex;gap:8px;font-family:var(--mono);font-size:11px;line-height:1.55;color:var(--text);}
+.tip-icon{flex-shrink:0;color:var(--amber);margin-top:1px;}
+
+/* Input base */
+.sa-input{
+  width:100%;padding:8px 10px;
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:3px;font-family:var(--mono);font-size:12px;
+  color:var(--white);outline:none;
+}
+.sa-input:focus{border-color:var(--cyan);}
+input[type=number]{-moz-appearance:textfield;}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+
+/* ── TINYSA PAGE ── */
+.tinysa-layout{flex:1;display:grid;grid-template-columns:270px 1fr;min-height:0;overflow:hidden;}
+.tinysa-sidebar{
+  border-right:1px solid var(--border);
+  padding:16px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;
+}
+.tinysa-main{display:flex;flex-direction:column;padding:16px;gap:14px;overflow-y:auto;}
+
+.connect-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:4px;padding:18px;text-align:center;
+}
+.connect-icon{font-size:36px;margin-bottom:10px;}
+.connect-title{font-family:var(--display);font-size:26px;letter-spacing:0.05em;color:var(--white);margin-bottom:6px;}
+.connect-desc{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.65;margin-bottom:14px;}
+.btn-connect{
+  width:100%;padding:11px;background:rgba(0,212,255,0.1);
+  border:1px solid rgba(0,212,255,0.35);border-radius:3px;
+  font-family:var(--mono);font-size:12px;font-weight:600;
+  color:var(--cyan);cursor:pointer;transition:all 0.2s;letter-spacing:0.08em;
+}
+.btn-connect:hover{background:rgba(0,212,255,0.18);}
+.btn-connect:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-disconnect{
+  width:100%;padding:9px;margin-top:7px;
+  background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);
+  border-radius:3px;font-family:var(--mono);font-size:11px;
+  color:var(--red);cursor:pointer;transition:all 0.2s;letter-spacing:0.08em;
+}
+
+.sa-ctrl-group{display:flex;flex-direction:column;gap:5px;}
+.sa-ctrl-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;}
+.btn-scan{
+  width:100%;padding:11px;background:var(--cyan);color:#0b0c0f;border:none;
+  border-radius:3px;font-family:var(--display);font-size:21px;letter-spacing:0.08em;
+  cursor:pointer;transition:all 0.2s;font-weight:400;
+}
+.btn-scan:hover{background:#33ddff;}
+.btn-scan:disabled{background:var(--border2);color:var(--muted);cursor:not-allowed;}
+.btn-scan-stop{
+  width:100%;padding:11px;
+  background:rgba(255,71,87,0.12);border:1px solid rgba(255,71,87,0.3);
+  color:var(--red);border-radius:3px;
+  font-family:var(--display);font-size:21px;letter-spacing:0.08em;cursor:pointer;
+}
+.btn-import{
+  width:100%;padding:9px;background:rgba(245,166,35,0.1);
+  border:1px solid rgba(245,166,35,0.28);border-radius:3px;
+  font-family:var(--mono);font-size:11px;color:var(--amber);
+  cursor:pointer;transition:all 0.2s;letter-spacing:0.07em;margin-top:5px;
+}
+.btn-import:hover{background:rgba(245,166,35,0.18);}
+.btn-import:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* SA Spectrum */
+.sa-spectrum-wrap{
+  position:relative;background:var(--card);
+  border:1px solid var(--border);border-radius:4px;overflow:hidden;
+}
+.sa-canvas{width:100%;display:block;}
+.sa-overlay{
+  position:absolute;top:8px;right:12px;
+  font-family:var(--mono);font-size:10px;color:var(--muted);
+  text-align:right;pointer-events:none;
+}
+.sa-scanning{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(11,12,15,0.75);
+}
+.sa-scanning-text{
+  font-family:var(--display);font-size:30px;letter-spacing:0.1em;
+  color:var(--cyan);animation:scan-pulse 0.8s ease-in-out infinite;
+}
+@keyframes scan-pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* Peaks table */
+.peaks-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;}
+.peaks-table th{
+  text-align:left;padding:6px 10px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  color:var(--muted);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;
+  white-space:nowrap;
+}
+.peaks-table td{padding:6px 10px;border:1px solid var(--border);}
+.peaks-table tr:hover td{background:rgba(255,255,255,0.02);}
+.peak-clean{color:var(--green);}
+.peak-busy{color:var(--red);}
+
+/* Callouts */
+.callout{
+  display:flex;gap:10px;padding:11px 13px;border-radius:3px;
+  font-family:var(--mono);font-size:11px;line-height:1.6;flex-shrink:0;
+}
+.callout-amber{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.22);color:var(--amber2);}
+.callout-cyan{background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.18);color:var(--cyan);}
+.callout-red{background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.22);color:#ff9aa5;}
+.no-serial{
+  background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.22);
+  border-radius:3px;padding:14px;font-family:var(--mono);font-size:11px;
+  color:#ff9aa5;line-height:1.65;
+}
+
+/* Responsive */
+@media(max-width:900px){
+  .coord-layout,.tinysa-layout{grid-template-columns:1fr;overflow-y:auto;}
+  html,body{overflow:auto;}
+  .coord-sidebar,.tinysa-sidebar{border-right:none;border-bottom:1px solid var(--border);max-height:none;}
+  .info-grid{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  header{padding:0 12px;}
+  .brand-sub{display:none;}
+  .tab{padding:0 10px;font-size:11px;}
+  .info-grid{padding:12px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="brand">
+    <div class="brand-name">BERA</div>
+    <div class="brand-sub">Coordenador RF</div>
+  </div>
+  <div class="header-tabs">
+    <div class="tab tab-coord active" onclick="showPage('coord')">
+      <div class="dot"></div>COORDENADOR
+    </div>
+    <div class="tab tab-tinysa" onclick="showPage('tinysa')">
+      <div class="dot"></div>TINYSA
+    </div>
+  </div>
+  <div id="global-status" class="status-badge status-idle">AGUARDANDO</div>
+</header>
+
+<!-- COORDINATOR PAGE -->
+<div class="page active" id="page-coord">
+  <div class="coord-layout">
+
+    <!-- SIDEBAR -->
+    <div class="coord-sidebar">
+
+      <!-- Band selector -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">// Faixa de operação</div>
+        <div class="band-grid" id="band-grid"></div>
+        <div class="custom-band-row">
+          <input type="number" id="custom-start" class="sa-input" placeholder="Início MHz">
+          <input type="number" id="custom-end" class="sa-input" placeholder="Fim MHz">
+        </div>
+        <button class="btn-suggest" style="margin-top:8px;" onclick="useCustomBand()">USAR FAIXA CUSTOM</button>
+      </div>
+
+      <!-- Systems -->
+      <div class="sidebar-section" style="flex:1;">
+        <div class="sidebar-title">
+          // Sistemas RF <span style="color:var(--muted);font-size:10px;" id="sys-count">(0/16)</span>
+        </div>
+        <div class="systems-list" id="systems-list"></div>
+        <button class="btn-add" onclick="addSystem()" id="btn-add">+ ADICIONAR SISTEMA</button>
+        <div class="btn-row">
+          <button class="btn-suggest" onclick="suggestFrequencies()" id="btn-suggest">⚡ SUGERIR FREQUÊNCIAS</button>
+          <button class="btn-clear" onclick="clearAll()">LIMPAR TUDO</button>
+        </div>
+      </div>
+
+      <!-- Conflicts -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">
+          // Conflitos <span id="conflict-count" style="color:var(--red);"></span>
+        </div>
+        <div id="conflict-list">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;padding:8px;">
+            Adicione sistemas para verificar
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MAIN -->
+    <div class="coord-main">
+
+      <!-- Spectrum -->
+      <div class="spectrum-panel">
+        <div class="panel-title">
+          <span>// Espectro · Visualização de frequências</span>
+          <span id="spectrum-range"></span>
+        </div>
+        <div class="spectrum-wrap">
+          <canvas class="spectrum-canvas" id="coord-canvas"></canvas>
+        </div>
+        <div class="freq-axis" id="coord-axis"></div>
+        <div class="band-legend" id="band-legend"></div>
+      </div>
+
+      <!-- IM3 Table + Tips -->
+      <div class="info-grid">
+
+        <div class="info-card">
+          <div class="info-card-title">// Produtos IM3 calculados</div>
+          <div id="im3-container">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--muted);padding:6px 0;">Nenhum sistema configurado.</div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">// Boas práticas — RF OEM</div>
+          <div class="tips-list">
+            <div class="tip"><span class="tip-icon">→</span><span>Espaçamento mínimo entre canais: <strong style="color:var(--amber);">300kHz</strong> em equipamentos OEM sem true diversity.</span></div>
+            <div class="tip"><span class="tip-icon">→</span><span>Faça o scan do equipamento primeiro para identificar frequências <em>ocupadas</em> no ambiente, depois aplique a calculadora.</span></div>
+            <div class="tip"><span class="tip-icon">→</span><span>Equipe o receptor em ponto alto. Ganho de antena &gt; quantidade de receptores.</span></div>
+            <div class="tip"><span class="tip-icon">→</span><span>Frequências IM3 de 3ª ordem: <strong style="color:var(--red);">2·f₁ − f₂</strong> e <strong style="color:var(--red);">2·f₂ − f₁</strong> são as mais críticas.</span></div>
+            <div class="tip"><span class="tip-icon">→</span><span>Faixas 470–608 MHz são as mais seguras no Brasil. Evite acima de 700 MHz em shows grandes.</span></div>
+            <div class="tip"><span class="tip-icon">→</span><span>Sem true diversity: mantenha linha de visão entre TX e antena. Rotação do corpo cria dropout de até −20dB.</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TINYSA PAGE -->
+<div class="page" id="page-tinysa">
+  <div class="tinysa-layout">
+
+    <!-- Sidebar -->
+    <div class="tinysa-sidebar">
+
+      <div class="connect-card">
+        <div class="connect-icon">📡</div>
+        <div class="connect-title">TINYSA</div>
+        <div class="connect-desc">Conecte o TinySA via USB e clique em conectar. Requer Chrome/Edge com Web Serial API.</div>
+        <button class="btn-connect" id="btn-connect" onclick="connectTinySA()">CONECTAR USB</button>
+        <button class="btn-disconnect" id="btn-disconnect" onclick="disconnectTinySA()" style="display:none;">DESCONECTAR</button>
+        <div id="serial-status" style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;text-align:center;"></div>
+      </div>
+
+      <div id="no-serial-notice" style="display:none;">
+        <div class="no-serial">⚠ Web Serial API não disponível.<br>Use Chrome ou Edge para integrar o TinySA via USB.</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;" id="scan-controls">
+        <div class="sa-ctrl-group">
+          <div class="sa-ctrl-label">Frequência inicial (MHz)</div>
+          <input type="number" class="sa-input" id="sa-start" value="470" step="1">
+        </div>
+        <div class="sa-ctrl-group">
+          <div class="sa-ctrl-label">Frequência final (MHz)</div>
+          <input type="number" class="sa-input" id="sa-stop" value="670" step="1">
+        </div>
+        <div class="sa-ctrl-group">
+          <div class="sa-ctrl-label">Limiar de ocupação (dBm)</div>
+          <input type="number" class="sa-input" id="sa-threshold" value="-70" step="1">
+        </div>
+        <button class="btn-scan" id="btn-scan" onclick="startScan()" disabled>VARRER</button>
+        <button class="btn-scan-stop" id="btn-scan-stop" onclick="stopScan()" style="display:none;">PARAR</button>
+        <button class="btn-import" id="btn-import" onclick="importToCoordinator()" disabled>→ IMPORTAR LIVRES PARA COORDENADOR</button>
+      </div>
+
+      <div class="callout callout-cyan" style="font-size:10px;">
+        <span>ℹ</span>
+        <span>O TinySA usa o protocolo NanoVNA serial. Comandos: <strong>scan</strong>, <strong>frequencies</strong>, <strong>data 0</strong>.</span>
+      </div>
+
+    </div>
+
+    <!-- Main -->
+    <div class="tinysa-main">
+
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.14em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+          <span>// Varredura de espectro — TinySA</span>
+          <span id="sa-scan-info" style="color:var(--amber);font-size:10px;"></span>
+        </div>
+        <div class="sa-spectrum-wrap" id="sa-spectrum-wrap"
+             onmousedown="saStartCrosshair(event)"
+             onmousemove="saMoveCrosshair(event)"
+             onmouseup="saHideCrosshair()"
+             onmouseleave="saHideCrosshair()">
+          <canvas class="sa-canvas" id="sa-canvas" height="200"></canvas>
+          <div class="sa-overlay" id="sa-overlay">— dBm</div>
+          <div id="sa-crosshair" style="display:none;position:absolute;top:0;bottom:0;width:1px;background:rgba(245,166,35,0.7);pointer-events:none;"></div>
+          <div id="sa-crosshair-label" style="display:none;position:absolute;top:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);background:rgba(11,12,15,0.88);padding:3px 8px;border:1px solid rgba(245,166,35,0.3);border-radius:3px;pointer-events:none;white-space:nowrap;"></div>
+          <div class="sa-scanning" id="sa-scanning" style="display:none;">
+            <div class="sa-scanning-text">VARRENDO...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-amber" id="demo-notice">
+        <span>⚡</span>
+        <span>Modo demonstração ativo. Conecte o TinySA para dados reais. Dados abaixo são simulados.</span>
+      </div>
+
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.14em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;">// Picos detectados — candidatos a frequências livres</div>
+        <div style="overflow-x:auto;">
+          <table class="peaks-table" id="peaks-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Frequência</th>
+                <th>Nível</th>
+                <th>Status</th>
+                <th>IM3 c/ coord.</th>
+              </tr>
+            </thead>
+            <tbody id="peaks-tbody">
+              <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;font-family:var(--mono);font-size:11px;">Execute uma varredura para ver os resultados</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  BANDS (ANATEL Brazil)
+// ════════════════════════════════════════════════════════
+const BANDS = [
+  { id:'uhf1', name:'UHF 470–608', start:470, end:608, color:'rgba(57,224,122,0.15)', borderColor:'rgba(57,224,122,0.5)', note:'', status:'ok', label:'Faixa primária profissional' },
+  { id:'uhf2', name:'UHF 614–698', start:614, end:698, color:'rgba(245,166,35,0.1)',  borderColor:'rgba(245,166,35,0.4)', note:'⚠ Verificar 4G', status:'warn', label:'Conflito potencial 4G' },
+  { id:'vhf',  name:'VHF 169–216', start:169, end:216, color:'rgba(167,139,250,0.1)', borderColor:'rgba(167,139,250,0.4)', note:'⚠ Interferência alta', status:'warn', label:'Mais susceptível a EMI' },
+  { id:'900',  name:'900MHz Band', start:902, end:928, color:'rgba(255,71,87,0.08)',   borderColor:'rgba(255,71,87,0.3)',   note:'✗ Evitar em shows', status:'bad',  label:'Wi-Fi / Bluetooth' },
+  { id:'2g',   name:'2.4GHz ISM',  start:2400,end:2483,color:'rgba(255,71,87,0.08)',  borderColor:'rgba(255,71,87,0.3)',   note:'✗ Lotado', status:'bad',  label:'Wi-Fi / BT saturado' },
+];
+
+let selectedBand = BANDS[0];
+let systems = [];
+let saData = [];
+let saConnected = false;
+let saPort = null;
+let saScanning = false;
+
+const SYS_COLORS = [
+  '#f5a623','#00d4ff','#39e07a','#a78bfa','#ff4757','#ffd60a',
+  '#ff6b9d','#4ecdc4','#ff9f43','#54a0ff','#5f27cd','#01cbc6',
+  '#ff6348','#eccc68','#a29bfe','#74b9ff'
+];
+
+// ════════════════════════════════════════════════════════
+//  PAGE SWITCHING
+// ════════════════════════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelector('.tab-' + id).classList.add('active');
+  if (id === 'tinysa') initTinySAPage();
+  else { setTimeout(renderSpectrum, 50); }
+}
+
+// ════════════════════════════════════════════════════════
+//  BANDS UI
+// ════════════════════════════════════════════════════════
+function renderBands() {
+  const grid = document.getElementById('band-grid');
+  grid.innerHTML = BANDS.map(b => `
+    <button class="band-btn ${b.id === selectedBand.id ? 'selected' : ''}"
+            onclick="selectBand('${b.id}')">
+      <span class="b-name">${b.name}</span>
+      <span class="b-range">${b.start}–${b.end} MHz</span>
+      ${b.note ? `<span class="b-note">${b.note}</span>` : ''}
+    </button>
+  `).join('');
+}
+
+function selectBand(id) {
+  selectedBand = BANDS.find(b => b.id === id) || BANDS[0];
+  renderBands();
+  clearSystems();
+  renderSpectrum();
+  updateSpectrumRange();
+}
+
+function useCustomBand() {
+  const s = parseFloat(document.getElementById('custom-start').value);
+  const e = parseFloat(document.getElementById('custom-end').value);
+  if (!s || !e || s >= e) { alert('Informe uma faixa válida.'); return; }
+  selectedBand = { id:'custom', name:`Custom ${s}–${e}`, start:s, end:e, color:'rgba(0,212,255,0.08)', borderColor:'rgba(0,212,255,0.3)', note:'', status:'ok', label:'Faixa personalizada' };
+  document.querySelectorAll('.band-btn').forEach(b => b.classList.remove('selected'));
+  renderSpectrum();
+  updateSpectrumRange();
+}
+
+function updateSpectrumRange() {
+  document.getElementById('spectrum-range').textContent = `${selectedBand.start} – ${selectedBand.end} MHz`;
+}
+
+// ════════════════════════════════════════════════════════
+//  SYSTEMS
+// ════════════════════════════════════════════════════════
+function addSystem(freq) {
+  if (systems.length >= 16) return;
+  const id = Date.now() + Math.random();
+  systems.push({ id, freq: freq || '', color: SYS_COLORS[systems.length % SYS_COLORS.length] });
+  renderSystems();
+  analyzeConflicts();
+  renderSpectrum();
+}
+
+function removeSystem(id) {
+  systems = systems.filter(s => s.id !== id);
+  renderSystems();
+  analyzeConflicts();
+  renderSpectrum();
+}
+
+function clearSystems() {
+  systems = [];
+  renderSystems();
+  analyzeConflicts();
+  renderSpectrum();
+}
+
+function clearAll() {
+  clearSystems();
+  document.getElementById('im3-container').innerHTML =
+    '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);padding:6px 0;">Nenhum sistema configurado.</div>';
+}
+
+function onFreqChange(id, val) {
+  const sys = systems.find(s => s.id === id);
+  if (sys) sys.freq = val;
+  analyzeConflicts();
+  renderSpectrum();
+}
+
+function renderSystems() {
+  const list = document.getElementById('systems-list');
+  const count = document.getElementById('sys-count');
+  const btnAdd = document.getElementById('btn-add');
+  count.textContent = `(${systems.length}/16)`;
+  btnAdd.style.display = systems.length >= 16 ? 'none' : 'block';
+
+  const conflicts = getConflicts();
+  const conflictFreqs = new Set(conflicts.flatMap(c => [c.f1, c.f2]));
+
+  list.innerHTML = systems.map((s, i) => {
+    const isConflict = s.freq && conflictFreqs.has(parseFloat(s.freq));
+    return `
+    <div class="system-row ${isConflict ? 'conflict' : s.freq ? 'ok' : ''}">
+      <div class="sys-num" style="color:${s.color}">${i+1}</div>
+      <div class="sys-color" style="background:${s.color}"></div>
+      <input class="sys-freq-input" type="number" step="0.025"
+             value="${s.freq}" placeholder="ex: 537.500"
+             oninput="onFreqChange(${s.id}, this.value)">
+      <span class="sys-unit">MHz</span>
+      <span class="sys-status">${isConflict ? '⚠' : s.freq ? '✓' : ''}</span>
+      <button class="sys-remove" onclick="removeSystem(${s.id})" title="Remover">×</button>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════
+//  IM3 / CONFLICT ANALYSIS
+// ════════════════════════════════════════════════════════
+function getValidFreqs() {
+  return systems
+    .map(s => ({ freq: parseFloat(s.freq), color: s.color, id: s.id }))
+    .filter(s => !isNaN(s.freq) && s.freq > 0);
+}
+
+function getConflicts() {
+  const freqs = getValidFreqs();
+  const conflicts = [];
+  const MIN_SPACING = 0.3;
+
+  for (let i = 0; i < freqs.length; i++) {
+    for (let j = i + 1; j < freqs.length; j++) {
+      const f1 = freqs[i].freq, f2 = freqs[j].freq;
+
+      if (Math.abs(f1 - f2) < MIN_SPACING) {
+        conflicts.push({ type: 'ESPAÇAMENTO', f1, f2,
+          desc: `${f1.toFixed(3)} e ${f2.toFixed(3)} MHz — espaçamento ${(Math.abs(f1-f2)*1000).toFixed(0)}kHz < 300kHz mínimo` });
+      }
+
+      const im3_1 = 2 * f1 - f2;
+      const im3_2 = 2 * f2 - f1;
+
+      for (const v of getValidFreqs()) {
+        const tol = 0.1;
+        if (Math.abs(im3_1 - v.freq) < tol && v.freq !== f1 && v.freq !== f2) {
+          conflicts.push({ type: 'IM3', f1, f2, product: im3_1,
+            desc: `2×${f1.toFixed(3)} − ${f2.toFixed(3)} = ${im3_1.toFixed(3)} MHz → conflito com canal ${v.freq.toFixed(3)} MHz` });
+        }
+        if (Math.abs(im3_2 - v.freq) < tol && v.freq !== f1 && v.freq !== f2) {
+          conflicts.push({ type: 'IM3', f1, f2, product: im3_2,
+            desc: `2×${f2.toFixed(3)} − ${f1.toFixed(3)} = ${im3_2.toFixed(3)} MHz → conflito com canal ${v.freq.toFixed(3)} MHz` });
+        }
+      }
+    }
+  }
+  return conflicts;
+}
+
+function analyzeConflicts() {
+  const conflicts = getConflicts();
+  const list = document.getElementById('conflict-list');
+  const countEl = document.getElementById('conflict-count');
+  const statusBadge = document.getElementById('global-status');
+
+  if (conflicts.length === 0) {
+    const validCount = getValidFreqs().length;
+    if (validCount < 2) {
+      list.innerHTML = '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;padding:8px;">Adicione ao menos 2 sistemas</div>';
+      countEl.textContent = '';
+      statusBadge.className = 'status-badge status-idle';
+      statusBadge.textContent = 'AGUARDANDO';
+    } else {
+      list.innerHTML = '<div class="no-conflict">✓ Nenhum conflito detectado</div>';
+      countEl.textContent = '';
+      statusBadge.className = 'status-badge status-ok';
+      statusBadge.textContent = '✓ LIMPO';
+    }
+  } else {
+    countEl.textContent = `(${conflicts.length})`;
+    statusBadge.className = 'status-badge status-warn';
+    statusBadge.textContent = `⚠ ${conflicts.length} CONFLITO${conflicts.length > 1 ? 'S' : ''}`;
+    list.innerHTML = `<div class="conflict-list">` +
+      conflicts.map(c => `
+        <div class="conflict-item">
+          <div class="c-type">${c.type}</div>
+          ${c.desc}
+        </div>`).join('') +
+      `</div>`;
+  }
+  renderIM3Table();
+}
+
+function renderIM3Table() {
+  const freqs = getValidFreqs();
+  const container = document.getElementById('im3-container');
+  if (freqs.length < 2) {
+    container.innerHTML = '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);padding:6px 0;">Configure ao menos 2 frequências.</div>';
+    return;
+  }
+
+  const rows = [];
+  for (let i = 0; i < freqs.length; i++) {
+    for (let j = i + 1; j < freqs.length; j++) {
+      const f1 = freqs[i].freq, f2 = freqs[j].freq;
+      const p1 = 2*f1 - f2, p2 = 2*f2 - f1;
+      const conflicts = getConflicts();
+      const p1conflict = conflicts.some(c => c.product && Math.abs(c.product - p1) < 0.05);
+      const p2conflict = conflicts.some(c => c.product && Math.abs(c.product - p2) < 0.05);
+      rows.push(`
+        <tr>
+          <td style="color:${freqs[i].color}">${f1.toFixed(3)}</td>
+          <td style="color:${freqs[j].color}">${f2.toFixed(3)}</td>
+          <td class="${p1conflict ? 'im3-warn' : 'im3-ok'}">${p1.toFixed(3)} ${p1conflict ? '⚠' : '✓'}</td>
+          <td class="${p2conflict ? 'im3-warn' : 'im3-ok'}">${p2.toFixed(3)} ${p2conflict ? '⚠' : '✓'}</td>
+        </tr>`);
+    }
+  }
+
+  container.innerHTML = `
+    <table class="im3-table">
+      <thead><tr><th>F1 (MHz)</th><th>F2 (MHz)</th><th>2F1−F2</th><th>2F2−F1</th></tr></thead>
+      <tbody>${rows.join('')}</tbody>
+    </table>`;
+}
+
+// ════════════════════════════════════════════════════════
+//  SUGGEST FREQUENCIES
+// ════════════════════════════════════════════════════════
+function suggestFrequencies() {
+  const count = systems.length || 4;
+  const start = selectedBand.start;
+  const end = selectedBand.end;
+
+  const candidates = [];
+  const step = 0.025;
+  for (let f = start + 1; f <= end - 1; f += step) {
+    candidates.push(Math.round(f / step) * step);
+  }
+
+  const selected = [];
+  const MIN_SPACING = 0.5;
+
+  for (let i = 0; i < count && candidates.length > 0; i++) {
+    let bestFreq = null;
+    let bestScore = Infinity;
+
+    const sample = candidates.filter((_, idx) => idx % 5 === 0);
+    for (const cand of sample) {
+      const tooClose = selected.some(s => Math.abs(s - cand) < MIN_SPACING);
+      if (tooClose) continue;
+
+      let im3Score = 0;
+      for (let a = 0; a < selected.length; a++) {
+        for (let b = a + 1; b < selected.length; b++) {
+          const p1 = 2*selected[a] - selected[b];
+          const p2 = 2*selected[b] - selected[a];
+          if (Math.abs(p1 - cand) < 0.1 || Math.abs(p2 - cand) < 0.1) im3Score++;
+        }
+        const p1 = 2*cand - selected[a];
+        const p2 = 2*selected[a] - cand;
+        if (p1 >= start && p1 <= end) im3Score += 0.5;
+        if (p2 >= start && p2 <= end) im3Score += 0.5;
+      }
+
+      if (im3Score < bestScore) {
+        bestScore = im3Score;
+        bestFreq = cand;
+      }
+    }
+
+    if (bestFreq) selected.push(bestFreq);
+  }
+
+  systems.forEach((s, i) => {
+    if (i < selected.length) s.freq = selected[i].toFixed(3);
+  });
+
+  if (systems.length === 0) {
+    selected.forEach(f => {
+      systems.push({ id: Date.now() + Math.random(), freq: f.toFixed(3), color: SYS_COLORS[systems.length % SYS_COLORS.length] });
+    });
+  }
+
+  renderSystems();
+  analyzeConflicts();
+  renderSpectrum();
+}
+
+// ════════════════════════════════════════════════════════
+//  COORDINATOR SPECTRUM CANVAS
+// ════════════════════════════════════════════════════════
+function renderSpectrum() {
+  const canvas = document.getElementById('coord-canvas');
+  if (!canvas) return;
+  const wrap = canvas.parentElement;
+  canvas.width = wrap.offsetWidth || 600;
+  canvas.height = 120;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const bStart = selectedBand.start, bEnd = selectedBand.end;
+
+  const toX = f => ((f - bStart) / (bEnd - bStart)) * W;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#161a22';
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = selectedBand.color || 'rgba(57,224,122,0.08)';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = '#232a38';
+  ctx.lineWidth = 1;
+  const step = Math.max(1, Math.round((bEnd - bStart) / 10));
+  for (let f = Math.ceil(bStart / step) * step; f <= bEnd; f += step) {
+    const x = toX(f);
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+
+  const freqs = getValidFreqs();
+  for (let i = 0; i < freqs.length; i++) {
+    for (let j = i + 1; j < freqs.length; j++) {
+      const f1 = freqs[i].freq, f2 = freqs[j].freq;
+      const products = [2*f1 - f2, 2*f2 - f1, 3*f1 - 2*f2, 3*f2 - 2*f1];
+      products.forEach(p => {
+        if (p < bStart || p > bEnd) return;
+        const x = toX(p);
+        ctx.strokeStyle = 'rgba(255,71,87,0.5)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3,3]);
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(255,71,87,0.75)';
+        ctx.font = '9px IBM Plex Mono, monospace';
+        ctx.fillText('IM', x + 2, 13);
+      });
+    }
+  }
+
+  freqs.forEach((s, i) => {
+    const x = toX(s.freq);
+    if (x < 0 || x > W) return;
+
+    const grad = ctx.createLinearGradient(x-16, 0, x+16, 0);
+    grad.addColorStop(0, 'transparent');
+    grad.addColorStop(0.5, s.color + '22');
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.fillRect(x-16, 0, 32, H);
+
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x, H); ctx.lineTo(x, 16); ctx.stroke();
+
+    ctx.fillStyle = s.color;
+    ctx.beginPath();
+    ctx.arc(x, 12, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#0b0c0f';
+    ctx.font = 'bold 7px IBM Plex Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(i + 1, x, 15);
+    ctx.textAlign = 'left';
+
+    ctx.fillStyle = s.color;
+    ctx.font = '9px IBM Plex Mono, monospace';
+    const label = parseFloat(s.freq).toFixed(3);
+    const lx = Math.min(x - 14, W - label.length * 5.5);
+    ctx.fillText(label, lx, H - 4);
+  });
+
+  const axis = document.getElementById('coord-axis');
+  if (axis) {
+    axis.innerHTML = '';
+    const ticks = [];
+    for (let f = Math.ceil(bStart / step) * step; f <= bEnd; f += step) ticks.push(f);
+    ticks.forEach(f => {
+      const span = document.createElement('span');
+      span.className = 'freq-tick';
+      span.textContent = f >= 1000 ? (f/1000).toFixed(1)+'G' : f+'M';
+      axis.appendChild(span);
+    });
+  }
+
+  const legend = document.getElementById('band-legend');
+  if (legend) {
+    legend.innerHTML = `
+      <div class="legend-item"><div class="legend-dot" style="background:${SYS_COLORS[0]};"></div>Sistemas</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,71,87,0.6);"></div>Produtos IM3</div>
+    `;
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  TINYSA PAGE
+// ════════════════════════════════════════════════════════
+function initTinySAPage() {
+  if (!('serial' in navigator)) {
+    document.getElementById('no-serial-notice').style.display = 'block';
+    document.getElementById('btn-connect').disabled = true;
+    document.getElementById('btn-connect').textContent = 'WEB SERIAL INDISPONÍVEL';
+  }
+  renderSADemo();
+}
+
+let saWriter = null;
+let saReader = null;
+let saReadBuffer = '';
+const saDecoder = new TextDecoder();
+const saEncoder = new TextEncoder();
+
+async function connectTinySA() {
+  if (!('serial' in navigator)) return;
+  try {
+    saPort = await navigator.serial.requestPort();
+    await saPort.open({ baudRate: 115200, dataBits: 8, stopBits: 1, parity: 'none' });
+    saWriter = saPort.writable.getWriter();
+    saReader = saPort.readable.getReader();
+    saReadBuffer = '';
+    saConnected = true;
+    document.getElementById('btn-connect').style.display = 'none';
+    document.getElementById('btn-disconnect').style.display = 'block';
+    document.getElementById('btn-scan').disabled = false;
+    document.getElementById('serial-status').textContent = '✓ Conectado';
+    document.getElementById('serial-status').style.color = 'var(--green)';
+    document.getElementById('demo-notice').style.display = 'none';
+    document.getElementById('global-status').className = 'status-badge status-ok';
+    document.getElementById('global-status').textContent = '📡 TINYSA OK';
+    await drainPort(500);
+  } catch(e) {
+    document.getElementById('serial-status').textContent = 'Erro: ' + e.message;
+    document.getElementById('serial-status').style.color = 'var(--red)';
+    saWriter = null; saReader = null;
+  }
+}
+
+async function disconnectTinySA() {
+  saConnected = false; saScanning = false;
+  cancelAutoRefresh();
+  try { if (saReader) { await saReader.cancel(); saReader.releaseLock(); } } catch(e){}
+  try { if (saWriter) { saWriter.releaseLock(); } } catch(e){}
+  try { if (saPort) { await saPort.close(); } } catch(e){}
+  saPort = null; saWriter = null; saReader = null;
+  document.getElementById('btn-connect').style.display = 'block';
+  document.getElementById('btn-disconnect').style.display = 'none';
+  document.getElementById('btn-scan').disabled = true;
+  document.getElementById('serial-status').textContent = 'Desconectado';
+  document.getElementById('serial-status').style.color = 'var(--muted)';
+  document.getElementById('demo-notice').style.display = 'flex';
+  document.getElementById('global-status').className = 'status-badge status-idle';
+  document.getElementById('global-status').textContent = 'AGUARDANDO';
+}
+
+async function serialWrite(cmd) {
+  if (!saWriter) throw new Error('Porta não conectada');
+  await saWriter.write(saEncoder.encode(cmd + '\r\n'));
+}
+
+async function drainPort(ms) {
+  const deadline = Date.now() + ms;
+  while (Date.now() < deadline) {
+    try {
+      const t = new Promise((_, r) => setTimeout(() => r(new Error('t')), 80));
+      const { value } = await Promise.race([saReader.read(), t]);
+      if (value) saReadBuffer = '';
+    } catch(e) { break; }
+  }
+}
+
+async function readLines(count, timeoutMs) {
+  const lines = [];
+  const deadline = Date.now() + timeoutMs;
+  while (lines.length < count && Date.now() < deadline && saScanning) {
+    try {
+      const remaining = deadline - Date.now();
+      const t = new Promise((_, r) => setTimeout(() => r(new Error('t')), Math.min(remaining, 500)));
+      const { value, done } = await Promise.race([saReader.read(), t]);
+      if (done) break;
+      saReadBuffer += saDecoder.decode(value);
+      const parts = saReadBuffer.split('\n');
+      saReadBuffer = parts.pop();
+      for (const part of parts) {
+        const v = parseFloat(part.trim());
+        if (!isNaN(v) && v < 0 && v > -130) lines.push(v);
+      }
+    } catch(e) {
+      if (e.message === 't') continue;
+      break;
+    }
+  }
+  return lines;
+}
+
+async function startScan() {
+  const statusEl = document.getElementById('serial-status');
+  if (!saConnected) { statusEl.textContent = 'Erro: não conectado'; statusEl.style.color='var(--red)'; renderSADemo(); return; }
+  if (!saWriter) { statusEl.textContent = 'Erro: writer nulo — reconecte'; statusEl.style.color='var(--red)'; return; }
+  if (!saReader) { statusEl.textContent = 'Erro: reader nulo — reconecte'; statusEl.style.color='var(--red)'; return; }
+  const startMHz = parseFloat(document.getElementById('sa-start').value);
+  const stopMHz  = parseFloat(document.getElementById('sa-stop').value);
+  document.getElementById('btn-scan').style.display = 'none';
+  document.getElementById('btn-scan-stop').style.display = 'block';
+  document.getElementById('sa-scanning').style.display = 'flex';
+  saScanning = true;
+  saData = [];
+  try {
+    const scanPoints = 290;
+    statusEl.textContent = 'Varrendo...';
+    await serialWrite(`scan ${Math.round(startMHz*1e6)} ${Math.round(stopMHz*1e6)} ${scanPoints}`);
+    const scanDurationMs = Math.max(4000, scanPoints * 30 + 1000);
+    await new Promise(r => setTimeout(r, scanDurationMs));
+    if (!saScanning) { stopScan(); return; }
+    await drainPort(300);
+    statusEl.textContent = 'Lendo dados...';
+    await serialWrite('data 0');
+    const values = await readLines(scanPoints, 8000);
+    const freqStep = (stopMHz - startMHz) / scanPoints;
+    values.forEach((v, i) => {
+      saData.push({ freq: startMHz + i * freqStep, level: v });
+      if (i % 20 === 0) renderSACanvas();
+    });
+    statusEl.textContent = `✓ ${saData.length} pontos lidos`;
+  } catch(e) {
+    console.error('Scan error:', e);
+    statusEl.textContent = 'Erro: ' + e.message;
+    statusEl.style.color = 'var(--red)';
+  }
+  stopScan();
+}
+
+let autoRefreshTimer = null;
+let firstScanDone = false;
+let countdownInterval = null;
+
+function stopScan() {
+  saScanning = false;
+  document.getElementById('btn-scan').style.display = 'block';
+  document.getElementById('btn-scan-stop').style.display = 'none';
+  document.getElementById('sa-scanning').style.display = 'none';
+  if (saData.length > 0) {
+    renderSACanvas();
+    renderPeaks();
+    document.getElementById('btn-import').disabled = false;
+    document.getElementById('demo-notice').style.display = 'none';
+    if (!firstScanDone) { firstScanDone = true; scheduleRefresh(); }
+    updateRefreshCountdown(30);
+  } else {
+    const s = document.getElementById('serial-status');
+    s.textContent = '⚠ 0 pontos — verifique conexão';
+    s.style.color = 'var(--amber)';
+  }
+}
+
+function updateRefreshCountdown(seconds) {
+  if (countdownInterval) clearInterval(countdownInterval);
+  let remaining = seconds;
+  const el = document.getElementById('serial-status');
+  el.style.color = 'var(--muted)';
+  countdownInterval = setInterval(() => {
+    if (!saConnected || saScanning) { clearInterval(countdownInterval); return; }
+    remaining--;
+    el.textContent = `✓ Próxima varredura em ${remaining}s`;
+    if (remaining <= 0) clearInterval(countdownInterval);
+  }, 1000);
+}
+
+function scheduleRefresh() {
+  if (autoRefreshTimer) clearTimeout(autoRefreshTimer);
+  autoRefreshTimer = setTimeout(async () => {
+    if (!saConnected || saScanning) return;
+    await startScan();
+    scheduleRefresh();
+  }, 30000);
+}
+
+function cancelAutoRefresh() {
+  firstScanDone = false;
+  if (autoRefreshTimer) { clearTimeout(autoRefreshTimer); autoRefreshTimer = null; }
+  if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+}
+
+// ── Crosshair ──
+let crosshairActive = false;
+
+function saStartCrosshair(e) { crosshairActive = true; saMoveCrosshair(e); }
+
+function saMoveCrosshair(e) {
+  if (!crosshairActive || !saData.length) return;
+  const wrap = document.getElementById('sa-spectrum-wrap');
+  const rect = wrap.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const ratio = Math.max(0, Math.min(1, x / rect.width));
+  const startMHz = saData[0].freq;
+  const stopMHz  = saData[saData.length - 1].freq;
+  const freq = startMHz + ratio * (stopMHz - startMHz);
+  const idx = Math.round(ratio * (saData.length - 1));
+  const level = saData[idx] ? saData[idx].level.toFixed(1) : '—';
+
+  const ch = document.getElementById('sa-crosshair');
+  ch.style.display = 'block';
+  ch.style.left = x + 'px';
+
+  const label = document.getElementById('sa-crosshair-label');
+  label.textContent = freq.toFixed(3) + ' MHz  ' + level + ' dBm';
+  label.style.display = 'block';
+  const labelWidth = 190;
+  const leftPos = x + 10 + labelWidth > rect.width ? x - labelWidth - 6 : x + 10;
+  label.style.left = leftPos + 'px';
+}
+
+function saHideCrosshair() {
+  crosshairActive = false;
+  document.getElementById('sa-crosshair').style.display = 'none';
+  document.getElementById('sa-crosshair-label').style.display = 'none';
+}
+
+function renderSADemo() {
+  const startMHz = parseFloat(document.getElementById('sa-start').value) || 470;
+  const stopMHz  = parseFloat(document.getElementById('sa-stop').value)  || 670;
+  saData = [];
+  const N = 512;
+  for (let i = 0; i < N; i++) {
+    const f = startMHz + (i / N) * (stopMHz - startMHz);
+    let level = -90 + Math.random() * 8;
+    const occupied = [487.500, 512.100, 535.250, 560.775, 580.000];
+    for (const occ of occupied) {
+      const dist = Math.abs(f - occ);
+      if (dist < 0.5) level += 35 * Math.exp(-dist * dist / 0.05);
+    }
+    saData.push({ freq: f, level });
+  }
+  renderSACanvas();
+  renderPeaks();
+  document.getElementById('btn-import').disabled = false;
+  document.getElementById('sa-scan-info').textContent = 'DEMONSTRAÇÃO — dados simulados';
+}
+
+function renderSACanvas() {
+  const canvas = document.getElementById('sa-canvas');
+  if (!canvas) return;
+  const wrap = canvas.parentElement;
+  canvas.width = wrap.offsetWidth || 700;
+  canvas.height = 200;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  if (!saData.length) return;
+
+  const minLevel = -100, maxLevel = -20;
+  const threshold = parseFloat(document.getElementById('sa-threshold').value) || -70;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#161a22';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = '#1c2130';
+  ctx.lineWidth = 1;
+  for (let db = minLevel; db <= maxLevel; db += 10) {
+    const y = H - ((db - minLevel) / (maxLevel - minLevel)) * H;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    ctx.fillStyle = '#4e5a72';
+    ctx.font = '9px IBM Plex Mono, monospace';
+    ctx.fillText(db + 'dB', 4, y - 2);
+  }
+
+  const threshY = H - ((threshold - minLevel) / (maxLevel - minLevel)) * H;
+  ctx.strokeStyle = 'rgba(245,166,35,0.55)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(0, threshY); ctx.lineTo(W, threshY); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(245,166,35,0.9)';
+  ctx.font = '9px IBM Plex Mono, monospace';
+  ctx.fillText('limiar ' + threshold + 'dBm', W - 100, threshY - 4);
+
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, 'rgba(0,212,255,0.8)');
+  grad.addColorStop(0.5, 'rgba(0,212,255,0.3)');
+  grad.addColorStop(1, 'rgba(0,212,255,0.05)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(0, H);
+  saData.forEach((pt, i) => {
+    const x = (i / (saData.length - 1)) * W;
+    const y = H - ((pt.level - minLevel) / (maxLevel - minLevel)) * H;
+    if (i === 0) ctx.lineTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.lineTo(W, H);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(0,212,255,0.9)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  saData.forEach((pt, i) => {
+    const x = (i / (saData.length - 1)) * W;
+    const y = H - ((pt.level - minLevel) / (maxLevel - minLevel)) * H;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  saData.forEach((pt, i) => {
+    if (pt.level > threshold) {
+      const x = (i / (saData.length - 1)) * W;
+      const y = H - ((pt.level - minLevel) / (maxLevel - minLevel)) * H;
+      ctx.fillStyle = 'rgba(255,71,87,0.4)';
+      ctx.fillRect(x - 1, y, 2, H - y);
+    }
+  });
+
+  document.getElementById('sa-overlay').textContent =
+    `${saData[0]?.freq.toFixed(1)} – ${saData[saData.length-1]?.freq.toFixed(1)} MHz`;
+}
+
+function renderPeaks() {
+  const threshold = parseFloat(document.getElementById('sa-threshold').value) || -70;
+  const peaks = [];
+  for (let i = 2; i < saData.length - 2; i++) {
+    const pt = saData[i];
+    if (pt.level > threshold &&
+        pt.level >= saData[i-1].level &&
+        pt.level >= saData[i+1].level &&
+        pt.level >= saData[i-2].level &&
+        pt.level >= saData[i+2].level) {
+      peaks.push(pt);
+    }
+  }
+  const cleanWindows = [];
+  for (let i = 5; i < saData.length - 5; i++) {
+    const pt = saData[i];
+    const neighbors = saData.slice(Math.max(0,i-4), Math.min(saData.length, i+5));
+    if (neighbors.every(n => n.level < threshold - 5)) {
+      cleanWindows.push(pt);
+      i += 4;
+    }
+  }
+
+  const tbody = document.getElementById('peaks-tbody');
+  if (peaks.length === 0 && cleanWindows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;font-family:var(--mono);font-size:11px;">Nenhum pico detectado</td></tr>';
+    return;
+  }
+
+  const coordFreqs = getValidFreqs().map(f => f.freq);
+  const rows = [
+    ...peaks.map(p => ({...p, type:'busy'})),
+    ...cleanWindows.slice(0,8).map(p => ({...p, type:'clean'}))
+  ].sort((a,b) => a.freq - b.freq);
+
+  tbody.innerHTML = rows.map((p, i) => {
+    const isBusy = p.type === 'busy';
+    const im3Conflict = coordFreqs.length >= 2 && coordFreqs.some(f => {
+      return coordFreqs.some(f2 => f !== f2 && (Math.abs(2*f - f2 - p.freq) < 0.1 || Math.abs(2*f2 - f - p.freq) < 0.1));
+    });
+    return `<tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td style="font-family:var(--mono);color:var(--white);">${p.freq.toFixed(3)} MHz</td>
+      <td class="${isBusy ? 'peak-busy' : 'peak-clean'}">${p.level.toFixed(1)} dBm</td>
+      <td class="${isBusy ? 'peak-busy' : 'peak-clean'}">${isBusy ? '✗ OCUPADO' : '✓ LIVRE'}</td>
+      <td class="${im3Conflict ? 'peak-busy' : 'peak-clean'}">${im3Conflict ? '⚠ Conflito IM3' : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function importToCoordinator() {
+  const threshold = parseFloat(document.getElementById('sa-threshold').value) || -70;
+  const clean = [];
+  for (let i = 5; i < saData.length - 5; i++) {
+    const pt = saData[i];
+    const neighbors = saData.slice(Math.max(0,i-4), Math.min(saData.length, i+5));
+    if (neighbors.every(n => n.level < threshold - 5)) {
+      clean.push(pt.freq);
+      i += 6;
+    }
+  }
+  clearSystems();
+  clean.slice(0, 8).forEach(f => addSystem(f.toFixed(3)));
+  showPage('coord');
+  suggestFrequencies();
+}
+
+// ════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  renderBands();
+  updateSpectrumRange();
+  renderSpectrum();
+  for (let i = 0; i < 4; i++) addSystem();
+  setTimeout(renderSADemo, 200);
+});
+
+window.addEventListener('resize', () => {
+  renderSpectrum();
+  if (saData.length) renderSACanvas();
+});
+</script>
+</body>
+</html>
